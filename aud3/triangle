@@ -1,0 +1,73 @@
+#include <iostream>
+#include <math.h>
+using namespace std;
+
+class Triangle {
+private:
+    int a,b,c;
+
+public:
+    Triangle(int aa = 0, int bb = 0, int cc = 0) {
+        a = aa;
+        b = bb;
+        c = cc;
+    }
+
+    ~Triangle() {
+        //cout<<"Object is destroyed!"<<endl;
+    }
+
+    int perimeter() {
+        return a + b + c;
+    }
+
+    float area() {
+        float s = (a + b + c) / 2.0;
+        return sqrt(s * (s - a) * (s - b) * (s - c));
+    }
+
+    void setA(int aa) {
+        a = aa;
+    }
+    void setB(int bb) {
+        b = bb;
+    }
+    void setC(int cc) {
+        c = cc;
+    }
+
+    /*int getA() {
+        return a;
+    }
+    int getB() {
+        return b;
+    }
+    int getC() {
+        return c;
+    }*/
+
+    void print() {
+        cout<<"The sides of the triangle are: "<<a<<' '<<b<<' '<<c<<endl;
+    }
+};
+
+int main()
+{
+    Triangle t;
+    t.print();
+    cout<<"Perimeter: "<<t.perimeter()<<endl;
+    cout<<"Area: "<<t.area()<<endl;
+
+    int a,b,c;
+    cout<<"Enter new sides for the triangle: ";
+    cin>>a>>b>>c;
+
+    t.setA(a);
+    t.setB(b);
+    t.setC(c);
+
+    t.print();
+    cout<<"Perimeter: "<<t.perimeter()<<endl;
+    cout<<"Area: "<<t.area()<<endl;
+    return 0;
+}
