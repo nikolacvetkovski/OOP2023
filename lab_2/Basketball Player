@@ -1,0 +1,44 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+class BasketballPlayer {
+private:
+    char firstname[20];
+    char lastname[20];
+    int jerseynumber;
+    int points1,points2,points3;
+
+public:
+    BasketballPlayer(char * ffirstname = "Nikola" , char * llastname = "Cvetkovski" , int jjerseynumber = 20, int ppoints1 = 10, int ppoints2 = 15, int ppoints3 = 25) {
+        strcpy(firstname, ffirstname);
+        strcpy(lastname, llastname);
+        jerseynumber = jjerseynumber;
+        points1 = ppoints1;
+        points2 = ppoints2;
+        points3 = ppoints3;
+    }
+
+    ~BasketballPlayer() {
+    }
+
+    int avg_pts() {
+        return (points1 + points2 + points3) / 3.0;
+    }
+
+    void printBasketballPlayer() {
+        cout<<"Player: "<<firstname<<' '<<lastname<<" with number: "<<jerseynumber<<" has "<<avg_pts()<<" points on average"<<endl;
+    }
+};
+
+int main()
+{
+    char firstname[20] , lastname[50];
+    int jerseynumber, pts1 , pts2, pts3;
+
+    cin>>firstname>>lastname>>jerseynumber>>pts1>>pts2>>pts3;
+    BasketballPlayer player(firstname,lastname,jerseynumber,pts1,pts2,pts3);
+
+    player.printBasketballPlayer();
+    return 0;
+}
