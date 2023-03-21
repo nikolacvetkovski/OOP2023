@@ -1,0 +1,106 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+enum Position {
+    basic,manager,owner
+};
+
+class Employee {
+private:
+    char name[20];
+    int salary;
+    Position position;
+
+public:
+    Employee(char * nname = "Nikola", int ssalary = 20000, Position pposition = basic) {
+        strcpy(name, nname);
+        salary = ssalary;
+        position = pposition;
+    }
+
+    ~Employee() {
+    }
+
+    void print() {
+        cout<<"Employee: "<<name<<" Salary: "<<salary;
+
+        switch(position) {
+        case basic:
+            cout<<" Simple Employee"<<endl;
+            break;
+
+        case manager:
+            cout<<" Manager of the department"<<endl;
+            break;
+
+        case owner:
+            cout<<" Owner of the department"<<endl;
+        }
+    }
+
+    void setName(char * nname) {
+        strcpy(name, nname);
+    }
+    void setSalary(int ssalary) {
+        salary = ssalary;
+    }
+    void setPosition(Position pposition) {
+        position = pposition;
+    }
+
+    char * getName() {
+        return name;
+    }
+    int getSalary() {
+        return salary;
+    }
+    Position getPosition() {
+        return position;
+    }
+};
+
+void swapEmployees(Employee &e1, Employee &e2) {
+    Employee temp = e1;
+    e1 = e2;
+    e2 = temp;
+}
+
+void compareEmployees(Employee * array, int n) {
+    int i,j;
+
+    for(i=0; i<n-1; i++) {
+        for(j=0; j<n-i-1; j++) {
+            if(array[j].getSalary() < array[j+1].getSalary())
+            {
+                swapEmployees(array[j],array[j+1]);
+            }
+        }
+    }
+}
+
+int main()
+{
+    int n,i;
+    cin>>n;
+
+    Employee employees[50];
+    char name[20];
+    int salary;
+    int position;
+
+    for(i=0; i<n; i++) {
+        cin>>name>>salary>>position; //Nikola 20000 1
+        //employees[i] = Employee(name,salary,(Position)position);
+        employees[i].setName(name);
+        employees[i].setSalary(salary);
+        employees[i].setPosition((Position)position);
+    }
+
+    compareEmployees(employees,n);
+
+    for(i=0; i<n; i++) {
+        employees[i].print();
+    }
+    return 0;
+}
