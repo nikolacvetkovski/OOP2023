@@ -1,0 +1,107 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+class BasketballPlayer {
+private:
+    char firstname[20];
+    char lastname[20];
+    int jerseynumber;
+    int points1,points2,points3;
+
+public:
+    BasketballPlayer (char * ffirstname = "Nikola", char * llastname = "Cvetkovski", int jjerseynumber = 25, int pt1 = 10, int pt2 = 10, int pt3 = 10) {
+        strcpy(firstname,ffirstname);
+        strcpy(lastname,llastname);
+        jerseynumber = jjerseynumber;
+        points1 = pt1;
+        points2 = pt2;
+        points3 = pt3;
+    }
+
+    ~BasketballPlayer () {
+    }
+
+    int avg_pts () {
+        return (points1 + points2 + points3) / 3;
+    }
+
+    void printPlayer () {
+        cout<<firstname<<' '<<lastname<<' ';
+    }
+
+    void setName(char * ffirstname) {
+        strcpy(firstname,ffirstname);
+    }
+
+    void setLast(char * llastname) {
+        strcpy(lastname,llastname);
+    }
+
+    void setJersey(int jjerseynumber) {
+        jerseynumber = jjerseynumber;
+    }
+
+    void setPoints1(int pt1) {
+        points1 = pt1;
+    }
+
+    void setPoints2(int pt2) {
+        points2 = pt2;
+    }
+
+    void setPoints3(int pt3) {
+        points3 = pt3;
+    }
+
+    int getJersey() {
+        return jerseynumber;
+    }
+};
+
+void swapPlayers(BasketballPlayer &i, BasketballPlayer &j) {
+    BasketballPlayer temp = i;
+    i = j;
+    j = temp;
+}
+
+void max_avg(BasketballPlayer * players, int n) {
+    int i,j;
+
+    for(i=0; i<n-1; i++)
+    {
+        for(j=0; j<n-1-i; j++)
+        {
+            if(players[j].avg_pts() > players[j+1].avg_pts())
+            {
+                swapPlayers(players[j],players[j+1]);
+            }
+        }
+    }
+}
+int main()
+{
+    BasketballPlayer players[20];
+    char firstname[20], lastname[20];
+    int n, jerseynumber, points1, points2, points3;
+
+    cin>>n;
+
+    for(int i=0; i<n; i++)
+    {
+        cin>>firstname>>lastname>>jerseynumber>>points1>>points2>>points3;
+        players[i].setName(firstname);
+        players[i].setLast(lastname);
+        players[i].setJersey(jerseynumber);
+        players[i].setPoints1(points1);
+        players[i].setPoints2(points2);
+        players[i].setPoints3(points3);
+    }
+
+    max_avg(players,n);
+
+    cout<<"The best player in the last three matches is ";
+    players[n-1].printPlayer();
+    cout<<"Number "<<players[n-1].getJersey()<<" with average score of "<<players[n-1].avg_pts()<<" points per match."<<endl;
+    return 0;
+}
