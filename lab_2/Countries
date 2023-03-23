@@ -1,0 +1,102 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+class Country {
+private:
+    char name[100];
+    char capital[100];
+    float area;
+    float population;
+
+public:
+    Country() { //default constructor
+        strcpy(name,"Macedonia");
+        strcpy(capital,"Skopje");
+        area = 250.74;
+        population = 1.8;
+    }
+
+     Country(char * nname, char * ccapital, float aarea, float ppopulation) {
+        strcpy(name,nname);
+        strcpy(capital,ccapital);
+        area = aarea;
+        population = ppopulation;
+     }
+
+     ~Country() {
+     }
+
+     void setName(char * nname) {
+         strcpy(name,nname);
+     }
+     void setCapital(char * ccapital) {
+         strcpy(capital,ccapital);
+     }
+     void setArea(float aarea) {
+         area = aarea;
+     }
+     void setPopulation(float ppopulation) {
+         population = ppopulation;
+     }
+
+     char getName() {
+        return * name;
+     }
+     char getCapital() {
+        return * capital;
+     }
+     float getArea() {
+        return area;
+     }
+     float getPopulation() {
+        return population;
+     }
+
+     void display() {
+        cout<<"Country: "<<name<<endl;
+        cout<<"Capital: "<<capital<<endl;
+        cout<<"Area: "<<area<<endl;
+        cout<<"Population: "<<population<<endl;
+     }
+};
+
+void sortCountries(Country * array, int n) {
+    int i,j;
+    for(i=0; i<n-1; i++)
+    {
+        for(j=0; j<n-1-i; j++)
+        {
+            if(array[j].getArea() > array[j+1].getArea())
+            {
+                Country temp = array[j];
+                array[j] = array[j+1];
+                array[j+1] = temp;
+            }
+        }
+    }
+}
+
+int main()
+{
+    char name[100], capital[100];
+    float area, population;
+
+    Country countries[50];
+    int n,i;
+
+    cin>>n;
+    for(i=0; i<n; i++)
+    {
+        cin>>name>>capital>>area>>population;
+        countries[i] = Country(name,capital,area,population);
+    }
+
+    sortCountries(countries,n);
+
+    for(i=0; i<n; i++)
+    {
+        countries[i].display();
+    }
+    return 0;
+}
