@@ -58,6 +58,22 @@ public:
     }
 };
 
+/*void printMostPopularFilm(Film *films, int n){
+
+    int max = 0, max_i = 0;
+    for(int i=0; i<n; i++){
+
+        if(films[i].getRevenue() > max){
+            max=films[i].getRevenue();
+            max_i = i;
+        }
+    }
+
+    cout<<"Name of film: "<<films[max_i].getName()<<endl;
+    cout<<"Rating:" << films[max_i].getRating()<<endl;
+    cout<<"Revenue: "<<films[max_i].getRevenue()<<endl;
+}*/
+
 void printMostPopularFilm(Film * films, int n)
 {
     int i,j;
