@@ -1,0 +1,134 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+class Student {
+private:
+    char firstname[10];
+    char lastname[20];
+    char index[10];
+    int grades[5];
+
+public:
+    Student(char * ffirstname, char * llastname, char * iindex, int * ggrades)
+    {
+        strcpy(firstname,ffirstname);
+        strcpy(lastname,llastname);
+        strcpy(index,iindex);
+
+        for(int i=0; i<5; i++)
+        {
+            grades[i] = ggrades[i];
+        }
+    }
+
+    Student()
+    {
+        strcpy(firstname,"Nikola");
+        strcpy(lastname,"Cvetkovski");
+        strcpy(index,"203190");
+
+        grades[0] = '5';
+        grades[1] = '6';
+        grades[2] = '5';
+        grades[3] = '7';
+        grades[4] = '5';
+    }
+
+    ~Student() {
+    }
+
+    double avg_grades() {
+        int sum = 0;
+        for(int i=0; i<5; i++)
+        {
+           sum += grades[i];
+        }
+         return sum / 5.0;
+    }
+
+    void setName(char * ffirstname) {
+        strcpy(firstname,ffirstname);
+    }
+    void setLast(char * llastname) {
+        strcpy(lastname,llastname);
+    }
+    void setIndex(char * iindex) {
+        strcpy(index,iindex);
+    }
+    void setGrades(int * ggrades) {
+        for(int i=0; i<5; i++)
+        {
+            grades[i] = ggrades[i];
+        }
+    }
+
+    char getName() {
+        return * firstname;
+    }
+    char getLast() {
+        return * lastname;
+    }
+    char getIndex() {
+        return * index;
+    }
+    int getGrades() {
+        return * grades;
+    }
+
+    void printStudent() {
+        cout<<"Student: "<<firstname<<' '<<lastname<<endl;
+        cout<<"Index: "<<index<<endl;
+        cout<<"Average Grades: "<<avg_grades()<<endl;
+    }
+};
+
+void swapStudents(Student &i, Student &j)
+{
+    Student temp = i;
+    i = j;
+    j = temp;
+}
+
+void sortStudents(Student * array, int n)
+{
+    int i,j;
+    for(i=0; i<n-1; i++)
+    {
+        for(j=0; j<n-1-i; j++)
+        {
+            if(array[j].avg_grades() < array[j+1].avg_grades())
+            {
+                swapStudents(array[j],array[j+1]);
+            }
+        }
+    }
+}
+
+int main()
+{
+    Student students[10];
+    char firstname[10], lastname[20], index[10];
+    int grades[5], grade, n;
+
+    cin>>n;
+    for(int i=0; i<n; i++)
+    {
+        cin>>firstname>>lastname>>index;
+        for(int i=0; i<5; i++)
+        {
+            cin>>grade;
+            grades[i] = grade;
+        }
+
+        students[i] = Student(firstname,lastname,index,grades);
+    }
+
+    sortStudents(students,n);
+
+    for(int i=0; i<5; i++)
+    {
+        students[i].printStudent();
+    }
+    return 0;
+}
