@@ -1,0 +1,133 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+class Boy {
+private:
+    char firstname[20];
+    char lastname[20];
+    int age;
+
+public:
+    Boy(char * ffirstname = "Nikola", char * llastname = "Cvetkovski", int aage = 21) {
+        strcpy(firstname,ffirstname);
+        strcpy(lastname,llastname);
+        age = aage;
+    }
+
+    Boy(Boy &b)
+    {
+        strcpy(firstname,b.firstname);
+        strcpy(lastname,b.lastname);
+        age = b.age;
+    }
+
+    ~Boy() {
+
+    }
+
+    void printBoy() {
+        cout<<"Boy: "<<firstname<<' '<<lastname<<' '<<age<<endl;
+    }
+
+    int getAge() {
+        return age;
+    }
+
+    void setAge(int aage) {
+        age = aage;
+    }
+};
+
+class Girl {
+private:
+    char firstname[20];
+    char lastname[20];
+    int age;
+
+public:
+    Girl(char * ffirstname = "Neda", char * llastname = "Jonovska", int aage = 21) {
+        strcpy(firstname,ffirstname);
+        strcpy(lastname,llastname);
+        age = aage;
+    }
+
+    Girl(Girl &g)
+    {
+        strcpy(firstname,g.firstname);
+        strcpy(lastname,g.lastname);
+        age = g.age;
+    }
+
+    ~Girl() {
+
+    }
+
+    void printGirl() {
+        cout<<"Girl: "<<firstname<<' '<<lastname<<' '<<age<<endl;
+    }
+
+    int getAge() {
+        return age;
+    }
+};
+
+class Date {
+private:
+    Boy boy;
+    Girl girl;
+
+public:
+    Date () {
+    }
+
+    Date(Boy bboy, Girl ggirl) {
+        boy = bboy;
+        girl = ggirl;
+    }
+
+    Date(Date &d) {
+        boy = d.boy;
+        girl = d.girl;
+    }
+
+    ~Date () {
+    }
+
+    void printDate() {
+        cout<<"Date: ";
+        boy.printBoy();
+        cout<<"with ";
+        girl.printGirl();
+    }
+
+    void isMatch() {
+        if(abs(boy.getAge() - girl.getAge()) <= 5) {
+            cout<<"Match."<<endl;
+        }
+        else {
+            cout<<"Not a match."<<endl;
+        }
+    }
+};
+
+int main()
+{
+    Boy b;
+
+    Boy b1(b);
+    Boy b2 = b;
+    //b1.printBoy();
+
+    Girl g;
+
+    b.setAge(22);
+    Date d(b,g);
+
+    d.printDate();
+    d.isMatch();
+
+    //d.printDate();
+
+    return 0;
+}
