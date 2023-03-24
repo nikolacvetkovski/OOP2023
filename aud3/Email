@@ -1,0 +1,70 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+class Email {
+private:
+    char from[50];
+    char to[50];
+    char subject[50];
+    char body[500];
+
+public:
+    Email(char * ffrom = "", char * tto = "", char * ssubject = "", char * bbody = "") {
+        strcpy(from,ffrom);
+        strcpy(to,tto);
+        strcpy(subject,ssubject);
+        strcpy(body,bbody);
+    }
+
+    ~Email() {
+    }
+
+    void printEmail() {
+        cout<<"FROM: "<<from<<endl;
+        cout<<"TO: "<<to<<endl;
+        cout<<"SUBJECT: "<<subject<<endl;
+        cout<<endl;
+        cout<<body<<endl;
+    }
+};
+
+bool isValid(char * email)
+{
+    int f1 = 0, pos1 = 0;
+    for(int i=0; i<strlen(email); i++) {
+        if(email[i] == '@')
+        {
+            f1 = 1;
+            pos1 = i;
+        }
+    }
+
+    int f2 = 0;
+    for(int i = pos1; i<strlen(email); i++) {
+        if(email[i] == '.')
+        {
+            f2 = 1;
+        }
+    }
+
+    return ((f1==1) && (f2==1));
+}
+
+int main()
+{
+    char from[50], to[50], subject[50], body[500];
+    cin>>from>>to>>subject>>body;
+
+    if(isValid(from) && isValid(to))
+    {
+        Email e(from,to,subject,body);
+        e.printEmail();
+    }
+
+    else
+    {
+        cout<<"Invalid e-mail data!"<<endl;
+    }
+    return 0;
+}
