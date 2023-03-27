@@ -1,0 +1,127 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+class Team {
+private:
+    char name[30];
+    int year;
+    char city[30];
+
+public:
+    Team(char * nname = "Vardar" , int yyear = 1961, char * ccity = "Skopje")
+    {
+        strcpy(name,nname);
+        year = yyear;
+        strcpy(city,ccity);
+    }
+
+    Team(const Team &team)
+    {
+        strcpy(name,team.name);
+        year = team.year;
+        strcpy(city,team.city);
+    }
+
+    ~Team() {
+    }
+
+    void printTeam()
+    {
+        cout<<name<<' '<<year<<' '<<city<<endl;
+    }
+
+    char * getName() {
+        return name;
+    }
+};
+
+class Match {
+private:
+    Team homeTeam;
+    Team awayTeam;
+    int homeTeamgoals;
+    int awayTeamgoals;
+
+public:
+    Match() {
+    }
+
+    Match(Team hhomeTeam, Team aawayTeam, int hhomeTeamgoals, int aawayTeamgoals)
+    {
+        homeTeam = hhomeTeam;
+        awayTeam = aawayTeam;
+        homeTeamgoals = hhomeTeamgoals;
+        awayTeamgoals = aawayTeamgoals;
+    }
+
+    Match(const Match &match)
+    {
+        homeTeam = match.homeTeam;
+        awayTeam = match.awayTeam;
+        homeTeamgoals = match.homeTeamgoals;
+        awayTeamgoals = match.awayTeamgoals;
+    }
+
+    ~Match () {
+    }
+
+    Team getHome() {
+        return homeTeam;
+    }
+    Team getAway() {
+        return awayTeam;
+    }
+    int getHomegoals() {
+        return homeTeamgoals;
+    }
+    int getAwaygoals() {
+        return awayTeamgoals;
+    }
+
+};
+
+bool isRematch(Match m1, Match m2)
+{
+    return strcmp(m1.getHome().getName(), m2.getAway().getName()) == 0 && strcmp(m1.getAway().getName(), m2.getHome().getName()) == 0;
+}
+
+Team isBetter(Match m1, Match m2)
+{
+    if(isRematch(m1,m2)) {
+        int t1goals = m1.getHomegoals() + m2.getAwaygoals();
+        int t2goals = m1.getAwaygoals() + m2.getHomegoals();
+
+        if(t1goals > t2goals) {
+            return m1.getHome();
+        }
+        else if(t1goals < t2goals) {
+            return m1.getAway();
+        }
+        else {
+            return 0;
+        }
+    }
+    else {
+        cout<<"Not a rematch!"<<endl;
+        return 0;
+    }
+}
+
+int main()
+{
+    Team t1("Vardar",1961,"Skopje");
+    Team t2("Pelister",1982,"Bitola");
+    Team t3("Teteks",1991,"Tetovo");
+
+    Match m1(t1,t2,2,0);
+    Match m2(t2,t1,3,2);
+    Match m3(t1,t3,3,0);
+
+    cout<<isRematch(m1,m2)<<endl;
+    cout<<isRematch(m1,m3)<<endl;
+
+    cout<<isBetter(m1,m2).getName()<<endl;
+    cout<<isBetter(m1,m3).getName()<<endl;
+    return 0;
+}
