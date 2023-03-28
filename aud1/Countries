@@ -1,0 +1,89 @@
+#include <stdio.h>
+
+typedef struct City {
+
+    char name[30];
+    int population;
+
+}City;
+
+typedef struct President {
+
+    char firstName[30];
+    char lastName[30];
+    char party[30];
+
+}President;
+
+typedef struct Country {
+
+    char name[30];
+    int population;
+    City capital;
+    President president;
+
+}Country;
+
+void readCity(City * c) {
+    scanf("%s %d", c->name, &c->population);
+}
+
+void readPresident(President * p) {
+    scanf("%s %s %s", p->firstName, p->lastName, p->party);
+}
+
+void readCountry(Country * c) {
+    scanf("%s", c->name);
+    readPresident(&c->president);
+    readCity(&c->capital);
+    scanf("%d", &c->population);
+}
+
+void printCity(City c) {
+    printf("%s %d ", c.name, c.population);
+}
+
+void printPresident(President p) {
+    printf("%s %s %s ", p.firstName, p.lastName, p.party);
+}
+
+void printCountry(Country c) {
+    printf("%s ", c.name);
+    printPresident(c.president);
+    printCity(c.capital);
+    printf("%d\n", c.population);
+}
+
+void sortCountries(Country * countries, int n) {
+    int max = countries[0].capital.population;
+    int max_pos = 0;
+
+    int i;
+    for(i=1; i<n; i++) {
+        if(max < countries[i].capital.population) {
+            max = countries[i].capital.population;
+            max_pos = i;
+        }
+    }
+
+    printf("%s %s", countries[max_pos].president.firstName, countries[max_pos].president.lastName);
+    //printPresident(countries[max_pos].president);
+}
+
+int main()
+{
+    Country countries[50];
+    int n,i;
+    scanf("%d", &n);
+
+    for(i=0; i<n; i++) {
+        readCountry(&countries[i]);
+    }
+
+    /*for(i=0; i<n; i++) {
+        printCountry(countries[i]);
+    }*/
+
+    sortCountries(countries,n);
+    return 0;
+}
