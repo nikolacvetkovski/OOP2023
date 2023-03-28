@@ -1,0 +1,90 @@
+#include <iostream>
+#include <string.h>
+
+using namespace std;
+
+struct City {
+
+    char name[30];
+    int population;
+
+
+    void readCity() {
+        cin>>name>>population;
+    }
+
+    void printCity() {
+        cout<<name<<' '<<population<<' ';
+    }
+};
+
+struct President {
+
+    char firstName[30];
+    char lastName[30];
+    char party[30];
+
+    void readPresident() {
+        cin>>firstName>>lastName>>party;
+    }
+
+    void printPresident() {
+       cout<<firstName<<' '<<lastName<<' '<<party<<' ';
+    }
+};
+
+struct Country {
+
+    char name[30];
+    int population;
+    City capital;
+    President president;
+
+
+    void readCountry() {
+        cin>>name;
+        president.readPresident();
+        capital.readCity();
+        cin>>population;
+    }
+
+    void printCountry() {
+        cout<<name<<' ';
+        president.printPresident();
+        capital.printCity();
+        cout<<population<<endl;
+    }
+};
+
+void sortCountries(Country * countries, int n) {
+    int max = countries[0].capital.population;
+    int max_pos = 0;
+
+    for(int i=1; i<n; i++) {
+        if(max < countries[i].capital.population) {
+            max = countries[i].capital.population;
+            max_pos = i;
+        }
+    }
+
+    cout<<countries[max_pos].president.firstName<<' '<<countries[max_pos].president.lastName;
+    //countries[max_pos].president.printPresident();
+}
+
+int main()
+{
+    Country countries[50];
+    int n;
+
+    cin>>n;
+    for(int i=0; i<n; i++) {
+        countries[i].readCountry();
+    }
+
+    /*for(int i=0; i<n; i++) {
+        countries[i].printCountry();
+    }*/
+
+    sortCountries(countries,n);
+    return 0;
+}
