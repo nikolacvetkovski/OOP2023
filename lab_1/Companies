@@ -64,17 +64,21 @@ void printEmployeesBelowAverageSalary(Company *comp, int numCompanies) {
 void printHighestSalaryEmployee(Company *comp, int numCompanies, char *department) {
     int i,j;
     int max = comp[0].employees[0].salary;
-    Employee highestSalaryEmployee;
+    int max_pos = 0 , flag = 0;
 
     for(i=0; i<numCompanies; i++) {
-        max = 0;
+        max = max_pos = flag = 0;
         for(j=0; j<comp[i].num_employees; j++) {
             if(strcmp(comp[i].employees[j].department, department) == 0 && comp[i].employees[j].salary > max) {
                 max = comp[i].employees[j].salary;
-                highestSalaryEmployee = comp[i].employees[j];
+                max_pos = j;
+                flag = 1;
             }
         }
-        printEmployee(highestSalaryEmployee);
+        if(flag == 1)
+        {
+            printEmployee(comp[i].employees[max_pos]);
+        }
     }
 }
 
