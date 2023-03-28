@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <string.h>
+
+typedef struct Employee {
+    char name[50];
+    char embg[50];
+    char department[50];
+    int salary;
+
+}Employee;
+
+typedef struct Company {
+    char name[50];
+    Employee employees[50];
+    int num_employees;
+
+}Company;
+
+void readEmployee(Employee * e) {
+    scanf("%s %s %s %d", e->name, e->embg, e->department, &e->salary);
+}
+
+void readCompany(Company * c) {
+    scanf("%s %d", c->name, &c->num_employees);
+
+    int i;
+    for(i=0; i<c->num_employees; i++) {
+        readEmployee(&c->employees[i]);
+    }
+}
+
+void printEmployee(Employee e) {
+    printf("%s %s %s %d\n", e.name, e.embg, e.department, e.salary);
+}
+
+void printCompany(Company c) {
+    printf("%s %d ", c.name, c.num_employees);
+    int i;
+    for(i=0; i<c.num_employees; i++) {
+        printEmployee(c.employees[i]);
+    }
+}
+
+float avg_salary(Company c) {
+    int i, sum = 0;
+    for(i=0; i<c.num_employees; i++) {
+        sum += c.employees[i].salary;
+    }
+    return (float)sum / c.num_employees;
+}
+
+void printEmployeesBelowAverageSalary(Company *comp, int numCompanies) {
+    int i,j;
+
+    for(i=0; i<numCompanies; i++) {
+        for(j=0; j<comp[i].num_employees; j++) {
+            if(comp[i].employees[j].salary < avg_salary(comp[i])) {
+                printEmployee(comp[i].employees[j]);
+            }
+        }
+    }
+}
+
+void printHighestSalaryEmployee(Company *comp, int numCompanies, char *department) {
+    int i,j;
+    int max = comp[0].employees[0].salary;
+    int max_pos_comp = 0;
+    int max_pos_emp = 0;
+
+    for(i=0; i<numCompanies; i++) {
+        max = 0;
+        max_pos_comp = 0;
+        for(j=0; j<comp[i].num_employees; j++) {
+                max_pos_emp = 0;
+            if(strcmp(department, comp[i].employees[j].department) == 0 && (comp[i].employees[j].salary > max)) {
+                max = comp[i].employees[j].salary;
+                max_pos_comp = i;
+                max_pos_emp = i;
+            }
+        }
+        printEmployee(comp[max_pos_comp].employees[max_pos_emp]);
+    }
+}
+
+int main()
+{
+    Company companies[100];
+    char department[100];
+    int i,n;
+
+    scanf("%d", &n);
+    for(i=0; i<n; i++) {
+        readCompany(&companies[i]);
+    }
+    scanf("%s" , department);
+
+    printf("Employees with salaries below the average:\n");
+    printEmployeesBelowAverageSalary(companies,n);
+
+    printf("Employees with highest salaries for given department:\n");
+    printHighestSalaryEmployee(companies,n,department);
+    return 0;
+}
