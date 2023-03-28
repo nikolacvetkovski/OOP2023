@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <string.h>
+
+typedef struct Transaction {
+
+    int id;
+    int sum;
+    int commission;
+    int transaction_type;
+
+}Transaction;
+
+void readTransaction(Transaction * t) {
+    scanf("%d %d %d %d", &t->id, &t->sum, &t->commission, &t->transaction_type);
+}
+
+/*void printTransaction(Transaction t) {
+    printf("%d %d %d %d\n", t.id, t.sum, t.commission, t.transaction_type);
+}*/
+
+
+int main()
+{
+    Transaction transactions[100];
+
+    int n,i, flag = 0;
+    scanf("%d" , &n);
+    for(i=0; i<n; i++)
+    {
+        readTransaction(&transactions[i]);
+    }
+
+    for(i=0; i<n; i++)
+    {
+        if(transactions[i].transaction_type == 1) {
+            flag = 1;
+            printf("%d %d\n", transactions[i].id, transactions[i].sum + transactions[i].commission);
+        }
+    }
+
+    if(flag == 0) {
+        printf("No credit card transaction.\n");
+    }
+
+    return 0;
+}
