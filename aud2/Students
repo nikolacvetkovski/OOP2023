@@ -1,0 +1,75 @@
+#include <iostream>
+#include <cstring>
+#include <ctype.h>
+
+using namespace std;
+
+void normalizeName(char * name) {
+    name[0] = toupper(name[0]);
+    for(size_t i=1; i<strlen(name); i++) {
+        name[i] = tolower(name[i]);
+    }
+}
+
+struct Student {
+    char firstName[20];
+    char lastName[20];
+    char index[10];
+    int grades[10];
+    int countgrades;
+
+
+    void readStudent() {
+        cin>>firstName>>lastName>>index>>countgrades;
+        for(int i=0; i<countgrades; i++) {
+            cin>>grades[i];
+        }
+    }
+
+    float average() {
+        int sum = 0;
+        for(int i=0; i<countgrades; i++) {
+            sum += grades[i];
+        }
+
+        return (float) sum / countgrades;
+    }
+
+    void printStudent() {
+        normalizeName(firstName);
+        normalizeName(lastName);
+
+        cout<<firstName<<' '<<lastName<<' '<<index<<' '<<average()<<endl;
+    }
+};
+
+void sortStudent(Student * students, int n) {
+    for(int i=0; i<n-1; i++) {
+        for(int j=0; j<n-1-i; j++) {
+            if(students[j].average() < students[j+1].average()) {
+                Student temp = students[j];
+                students[j] = students[j+1];
+                students[j+1] = temp;
+            }
+        }
+    }
+}
+
+int main()
+{
+    Student students[100];
+    int n;
+    cin>>n;
+
+    for(int i=0; i<n; i++) {
+       students[i].readStudent();
+    }
+
+    sortStudent(students,n);
+
+    for(int i=0; i<n; i++) {
+        students[i].printStudent();
+    }
+
+    return 0;
+}
