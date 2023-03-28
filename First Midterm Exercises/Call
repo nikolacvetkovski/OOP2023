@@ -20,7 +20,6 @@ void printCall (Call c) {
 }
 
 
-
 int main()
 {
     Call calls[100];
