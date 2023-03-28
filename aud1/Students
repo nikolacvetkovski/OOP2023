@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+typedef struct Student{
+
+    char firstName[20];
+    char lastName[20];
+    char index[10];
+    int grades[10];
+    int countgrades;
+
+}Student;
+
+void readStudent(Student * s) {
+    int i;
+    scanf("%s %s %s %d", s->firstName, s->lastName, s->index, &s->countgrades);
+    for(i=0; i<s->countgrades; i++) {
+        scanf("%d", &s->grades[i]);
+    }
+}
+
+void normalizeName(char * name) {
+    name[0] = toupper(name[0]);
+    int i;
+    for(i=1; i<strlen(name); i++) {
+        name[i] = tolower(name[i]);
+    }
+}
+
+float average(Student s) {
+    int sum = 0, i;
+    for(i=0; i<s.countgrades; i++) {
+        sum += s.grades[i];
+    }
+
+    return (float) sum / s.countgrades;
+}
+
+void sortStudent(Student * students, int n) {
+    int i,j;
+    for(i=0; i<n-1; i++) {
+        for(j=0; j<n-1-i; j++) {
+            if(average(students[j]) < average(students[j+1])) {
+                Student temp = students[j];
+                students[j] = students[j+1];
+                students[j+1] = temp;
+            }
+        }
+    }
+}
+
+void printStudent(Student s) {
+    normalizeName(s.firstName);
+    normalizeName(s.lastName);
+
+    printf("%s %s %s %.2f\n", s.firstName, s.lastName, s.index, average(s));
+}
+
+int main()
+{
+    Student students[100];
+    int i,n;
+    scanf("%d", &n);
+
+    for(i=0; i<n; i++) {
+        readStudent(&students[i]);
+    }
+
+    sortStudent(students,n);
+
+    for(i=0; i<n; i++) {
+        printStudent(students[i]);
+    }
+
+    return 0;
+}
