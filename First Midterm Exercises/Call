@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <string.h>
+
+typedef struct Call {
+    int day;
+    int month;
+    int year;
+    char caller[10];
+    char receiver[10];
+    int duration;
+
+}Call;
+
+void readCall (Call * c) {
+    scanf("%d %d %d %s %s %d", &c->day, &c->month, &c->year, c->caller, c->receiver, &c->duration);
+}
+
+void printCall (Call c) {
+    printf("%02d/%02d/%d %s %s %d\n", c.day, c.month, c.year, c.caller, c.receiver, c.duration);
+}
+
+
+
+int main()
+{
+    Call calls[100];
+
+    int i,n;
+    int totalDuration = 0;
+    scanf("%d", &n);
+
+    for(i=0; i<n; i++)
+    {
+        readCall(&calls[i]);
+    }
+
+    for(i=0; i<n; i++)
+    {
+        if((calls[i].year == 2019 || calls[i].year == 2020) && (strcmp(calls[i].caller, "070214011") == 0)) {
+            printCall(calls[i]);
+            totalDuration += calls[i].duration;
+        }
+    }
+
+    printf("Total duration: %d sec.\n", totalDuration);
+    return 0;
+}
