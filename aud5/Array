@@ -1,0 +1,123 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+class Array {
+private:
+    int *a;
+    int capacity;
+    int n;
+
+public:
+    Array(int capacity = 10) {
+        a = new int[capacity];
+        this->n = 0;
+        this->capacity = capacity;
+    }
+
+    ~Array() {
+        delete[] a;
+    }
+
+    Array(const Array &arr) {
+        a = new int[arr.capacity];
+        this->n = arr.n;
+        this->capacity = arr.capacity;
+        for(int i=0; i<n; i++) {
+            a[i] = arr.a[i];
+        }
+    }
+
+    Array &operator = (const Array &arr) {
+        if(this != &arr) {
+            delete[] a;
+        a = new int[arr.capacity];
+        this->n = arr.n;
+        this->capacity = arr.capacity;
+
+        for(int i=0; i<n; i++) {
+            a[i] = arr.a[i];
+            }
+        }
+        return *this;
+    }
+
+    void print() {
+    cout << "Capacity: " << capacity << endl;
+    cout << "Size: " << n << endl;
+    cout << "Percentage filled: " << (100.0 * n) / capacity << "%" << endl;
+
+        for(int i=0; i<n; i++) {
+            cout<<a[i]<<' ';
+        }
+        cout<<endl;
+    }
+
+    void add_number(int number) {
+        if(capacity > n) {
+            a[n] = number;
+            n++;
+        }
+        else {
+            capacity = capacity * 2;
+            int *temp = new int[capacity];
+            for(int i=0; i<n; i++) {
+                temp[i] = a[i];
+            }
+            temp[n] = number;
+            n++;
+            delete[] a;
+            a = temp;
+        }
+    }
+
+    //1 2 3 2 4  2
+    void delete_number(int number) {
+        int j=0;
+        for(int i=0; i<n; i++) {
+            if(a[i] != number) {
+                a[j] = a[i];
+                j++;
+            }
+        }
+
+        this->n = j;
+    }
+
+    void change_number(int number1, int number2) {
+        for(int i=0; i<n; i++) {
+            if(a[i] == number1) {
+                a[i] = number2;
+            }
+        }
+    }
+
+};
+
+int main()
+{
+    Array a;
+    a.print();
+
+    for(int i=0; i<10; i++) {
+        a.add_number(i);
+    }
+    a.print();
+
+    a.add_number(1);
+    a.print();
+
+    for(int i=1; i<=10; i++) {
+        a.add_number(i);
+    }
+    a.print();
+
+    a.change_number(1,7);
+    a.print();
+
+    a.delete_number(7);
+    a.print();
+
+    return 0;
+}
