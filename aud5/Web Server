@@ -1,0 +1,156 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+class WebPage {
+private:
+    char url[100];
+    char *content;
+public:
+    WebPage(char *url = "" , char *content = "") {
+        strcpy(this->url,url);
+        this->content = new char [strlen(content) + 1];
+        strcpy(this->content,content);
+    }
+
+    ~WebPage() {
+        delete[] content;
+    }
+
+    WebPage(const WebPage &wp) {
+        strcpy(this->url, wp.url);
+        this->content = new char [strlen(wp.content) + 1];
+        strcpy(this->content, wp.content);
+    }
+
+    WebPage &operator = (const WebPage &wp) {
+        if(this != &wp) {
+            delete[] content;
+            strcpy(this->url, wp.url);
+            this->content = new char [strlen(wp.content) + 1];
+            strcpy(this->content, wp.content);
+
+        }
+        return *this;
+    }
+
+    bool isEqual(WebPage &wp) {
+       return strcmp(url,wp.url) == 0;
+    }
+
+    friend class WebServer;
+};
+
+class WebServer {
+private:
+    char name[30];
+    WebPage *pages;
+    int n;
+public:
+    WebServer(char *name = "", WebPage *pages = 0, int n = 0) {
+        strcpy(this->name, name);
+        this->n = n;
+        this->pages = new WebPage[n];
+
+        for(int i=0; i<n; i++) {
+            this->pages[i] = pages[i];
+        }
+    }
+
+    ~WebServer() {
+        delete[] pages;
+    }
+
+    WebServer(const WebServer &wp) {
+        strcpy(this->name, wp.name);
+        this->n = wp.n;
+        this->pages = new WebPage[wp.n];
+
+        for(int i=0; i<n; i++) {
+            this->pages[i] = wp.pages[i];
+        }
+    }
+
+    WebServer &operator = (const WebServer &wp) {
+        if(this != &wp) {
+            delete[] pages;
+            strcpy(this->name, wp.name);
+            this->n = wp.n;
+            this->pages = new WebPage[wp.n];
+
+            for(int i=0; i<n; i++) {
+                this->pages[i] = wp.pages[i];
+            }
+        }
+        return *this;
+    }
+
+    void addPage(WebPage p) {
+        int flag = 0;
+        for(int i=0; i<n; i++) {
+            if(pages[i].isEqual(p)) {
+                flag = 1;
+            }
+        }
+        if(flag == 0) {
+            WebPage *temp = new WebPage[n+1];
+            for(int i=0; i<n; i++) {
+                temp[i] = pages[i];
+            }
+            temp[n] = p;
+            n++;
+            delete[] pages;
+            pages = temp;
+        }
+    }
+
+    void deletePage(WebPage p) {
+        int newN = 0;
+        for(int i=0; i<n; i++) {
+            if(!pages[i].isEqual(p)) {
+                newN++;
+            }
+        }
+
+        WebPage *temp = new WebPage[newN];
+        int j = 0;
+        for(int i=0; i<n; i++) {
+            if(!pages[i].isEqual(p)) {
+                temp[j] = pages[i];
+                j++;
+            }
+        }
+        delete[] pages;
+        pages = temp;
+        n = newN;
+    }
+
+    void listPages() {
+        for(int i=0; i<n; i++) {
+            cout<<pages[i].content<<" - "<<pages[i].url<<endl;
+        }
+
+    }
+};
+
+int main()
+{
+    WebPage wp1("www.google.com" , "Search Engine");
+    WebPage wp2("www.finki.ukim.com.mk" , "FINKI");
+    WebPage wp3("www.time.mk" , "News");
+
+    WebServer ws("Server 1");
+    ws.addPage(wp1);
+    ws.addPage(wp2);
+    ws.addPage(wp3);
+
+    ws.listPages();
+
+    cout<<"After delete: "<<endl;
+    ws.deletePage(wp3);
+
+    ws.listPages();
+
+    return 0;
+}
