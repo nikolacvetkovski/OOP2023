@@ -1,0 +1,107 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+class MobilePhone {
+private:
+    char model[20];
+    int numofModel;
+    int yearofRelease;
+
+public:
+    MobilePhone() {
+        strcpy(model, "iPhone");
+        numofModel = 12;
+        yearofRelease = 2020;
+    }
+
+    MobilePhone(char * model, int numofModel, int yearofRelease) {
+        strcpy(this->model, model);
+        this->numofModel = numofModel;
+        this->yearofRelease = yearofRelease;
+    }
+
+    MobilePhone(MobilePhone &mp) {
+        strcpy(model, mp.model);
+        numofModel = mp.numofModel;
+        yearofRelease = mp.yearofRelease;
+    }
+
+    ~MobilePhone() {
+    }
+
+    char * getModel() {
+        return model;
+    }
+
+    int getnumofModel() {
+        return numofModel;
+    }
+
+    int getyearofRelease() {
+        return yearofRelease;
+    }
+
+    void print() {
+        cout<<model<<' '<<numofModel<<' '<<"release year: "<<yearofRelease<<endl;
+    }
+};
+
+class Owner {
+private:
+    char firstName[20];
+    char lastName[20];
+    MobilePhone mobilephone;
+
+public:
+    Owner() {
+        strcpy(firstName, "Nikola");
+        strcpy(lastName, "Cvetkovski");
+    }
+
+    Owner(char * firstName, char * lastName, MobilePhone mobilephone) {
+        strcpy(this->firstName, firstName);
+        strcpy(this->lastName, lastName);
+        this->mobilephone = mobilephone;
+    }
+
+    Owner(Owner &ow) {
+        strcpy(firstName, ow.firstName);
+        strcpy(lastName, ow.lastName);
+        mobilephone = ow.mobilephone;
+    }
+
+    ~Owner() {
+    }
+
+    char * getfirstName() {
+        return firstName;
+    }
+
+    char * getlastName() {
+        return lastName;
+    }
+
+    MobilePhone getMobilePhone() {
+        return mobilephone;
+    }
+
+    void print() {
+        cout<<firstName<<' '<<lastName<<' '<<"has a mobile phone:"<<endl;
+        mobilephone.print();
+    }
+};
+
+int main()
+{
+    MobilePhone phone1;
+    MobilePhone phone2("Samsung", 5527, 2017);
+
+    Owner owner1;
+    Owner owner2("Neda", "Jonovska", phone2);
+
+    owner1.print();
+    owner2.print();
+    return 0;
+}
