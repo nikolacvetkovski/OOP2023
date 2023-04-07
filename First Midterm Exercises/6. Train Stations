@@ -1,0 +1,82 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+struct Voz {
+    char relacija[50];
+    float brKm;
+    int brPatnici;
+
+    void readVoz() {
+        cin>>relacija>>brKm>>brPatnici;
+    }
+
+    void printVoz() {
+        cout<<"Relacija: "<<relacija<<endl;
+        cout<<"Broj na km: "<<brKm<<endl;
+        cout<<"Broj na patnici: "<<brPatnici<<endl;
+    }
+};
+
+struct ZeleznickaStanica {
+    char grad[20];
+    Voz vozovi[30];
+    int brVozovi;
+
+    void readZeleznicka() {
+        cin>>grad;
+        cin>>brVozovi;
+        for(int i=0; i<brVozovi; i++) {
+            vozovi[i].readVoz();
+        }
+    }
+
+    void printZeleznicka() {
+        cout<<"Grad: "<<grad<<endl;
+        cout<<"Broj na vozovi: "<<brVozovi<<endl;
+        for(int i=0; i<brVozovi; i++) {
+            vozovi[i].printVoz();
+        }
+    }
+};
+
+void najkratkaRelacija(ZeleznickaStanica* zs, int n, char* grad) {
+    float min_relacija;
+    int min_pozicija1;
+    int min_pozicija2;
+
+    for(int i=0; i<n; i++) {
+        if(strcmp(grad, zs[i].grad) == 0) {
+            min_relacija = zs[i].vozovi[0].brKm;
+            min_pozicija1 = i;
+            min_pozicija2 = 0;
+
+            for(int j=0; j<zs[i].brVozovi; j++) {
+                if(min_relacija > zs[i].vozovi[j].brKm) {
+                    min_relacija = zs[i].vozovi[j].brKm;
+                    min_pozicija1 = i;
+                    min_pozicija2 = j;
+                }
+            }
+        }
+    }
+    cout<<"Najkratka relacija: "<<zs[min_pozicija1].vozovi[min_pozicija2].relacija<<' '<<"("<<min_relacija<<' '<<"km)"<<endl;
+}
+
+int main()
+{
+    ZeleznickaStanica zStanica[100];
+    int n;
+    cin>>n;
+
+    for(int i=0; i<n; i++) {
+        zStanica[i].readZeleznicka();
+    }
+
+    char grad[20];
+    cin>>grad;
+
+    najkratkaRelacija(zStanica,n,grad);
+    return 0;
+}
