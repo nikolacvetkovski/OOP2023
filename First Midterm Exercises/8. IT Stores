@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Laptop {
+    char company_name[100];
+    float size;
+    int isTouch;
+    int price;
+
+}Laptop;
+
+void readLaptop(Laptop *laptop) {
+    scanf("%s %f %d %d", laptop->company_name, &laptop->size, &laptop->isTouch, &laptop->price);
+}
+
+void printLaptop(Laptop laptop) {
+    printf("%s %g %d\n", laptop.company_name, laptop.size, laptop.price);
+}
+
+typedef struct ITStore {
+    char store_name[100];
+    char location[100];
+    Laptop laptops[100];
+    int n;
+
+}ITStore;
+
+void readITStore(ITStore *store) {
+    scanf("%s %s %d", store->store_name, store->location, &store->n);
+
+    int i;
+    for(i=0; i<store->n; i++) {
+        readLaptop(&store->laptops[i]);
+    }
+}
+
+void print(ITStore store) {
+    printf("%s %s\n", store.store_name, store.location);
+
+    int i;
+    for(i=0; i<store.n; i++) {
+        printLaptop(store.laptops[i]);
+    }
+}
+
+void cheapest_offer(ITStore *stores, int n) {
+    int i,j;
+    int min_price = 10000000, pos1 = 0, pos2 = 0;
+
+    for(i=0; i<n; i++) {
+        for(j=0; j<stores[i].n; j++) {
+            if((stores[i].laptops[j].isTouch) == 1) {
+                if(min_price > stores[i].laptops[j].price) {
+                    min_price = stores[i].laptops[j].price;
+                    pos1 = i;
+                    pos2 = j;
+                }
+            }
+        }
+    }
+
+    printf("Cheapest offer has the store: \n%s %s\n", stores[pos1].store_name, stores[pos1].location);
+    printf("Cheapest price is: %d\n", stores[pos1].laptops[pos2].price);
+}
+
+int main()
+{
+    ITStore stores[100];
+    int i,n;
+    scanf("%d", &n);
+
+    for(i=0; i<n; i++) {
+        readITStore(&stores[i]);
+    }
+
+    for(i=0; i<n; i++) {
+        print(stores[i]);
+    }
+
+    cheapest_offer(stores,n);
+
+    return 0;
+}
