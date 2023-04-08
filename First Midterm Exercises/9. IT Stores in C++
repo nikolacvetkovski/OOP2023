@@ -1,0 +1,81 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+struct Laptop {
+    char company_name[100];
+    float size;
+    bool isTouch;
+    int price;
+
+    void readLaptop() {
+        cin>>company_name>>size>>isTouch>>price;
+    }
+
+    void printLaptop() {
+        cout<<company_name<<' '<<size<<' '<<price<<endl;
+    }
+};
+
+struct ITStore {
+    char store_name[100];
+    char location[100];
+    Laptop laptops[100];
+    int n;
+
+    void readITStore() {
+    cin>>store_name>>location>>n;
+
+    for(int i=0; i<n; i++) {
+        laptops[i].readLaptop();
+        }
+    }
+
+    void printITStore() {
+    cout<<store_name<<' '<<location<<endl;
+
+    for(int i=0; i<n; i++) {
+        laptops[i].printLaptop();
+        }
+    }
+};
+
+void cheapest_offer(ITStore *stores, int n) {
+    int min_price = 10000000, pos1 = 0, pos2 = 0;
+
+    for(int i=0; i<n; i++) {
+        for(int j=0; j<stores[i].n; j++) {
+            if((stores[i].laptops[j].isTouch) == true) {
+                if(min_price > stores[i].laptops[j].price) {
+                    min_price = stores[i].laptops[j].price;
+                    pos1 = i;
+                    pos2 = j;
+                }
+            }
+        }
+    }
+
+    cout<<"Cheapest offer has the store: "<<endl;
+    cout<<stores[pos1].store_name<<' '<<stores[pos1].location<<endl;
+    cout<<"Cheapest price is: "<<stores[pos1].laptops[pos2].price<<endl;
+}
+
+int main()
+{
+    ITStore stores[100];
+    int n;
+    cin>>n;
+
+    for(int i=0; i<n; i++) {
+        stores[i].readITStore();
+    }
+
+    for(int i=0; i<n; i++) {
+        stores[i].printITStore();
+    }
+
+    cheapest_offer(stores,n);
+
+    return 0;
+}
