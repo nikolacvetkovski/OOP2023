@@ -1,0 +1,70 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+struct Player {
+    char username[15];
+    int level;
+    int points;
+
+    void readPlayer() {
+        cin>>username>>level>>points;
+    }
+};
+
+struct ComputerGame {
+    char game[20];
+    Player players[30];
+    int n;
+
+    void readComputerGame() {
+        cin>>game>>n;
+        for(int i=0; i<n; i++) {
+            players[i].readPlayer();
+        }
+    }
+};
+
+void bestPlayer(ComputerGame *games, int n) {
+    int popular_game = games[0].n, pos1 = 0, pos2 = 0;
+
+    for(int i=1; i<n; i++) {
+        if(popular_game < games[i].n) {
+            popular_game = games[i].n;
+            pos1 = i;
+        }
+    }
+
+    int best_player = games[pos1].players[0].points;
+
+    for(int i=0; i<games[pos1].n; i++) {
+        if(best_player < games[pos1].players[i].points) {
+            best_player = games[pos1].players[i].points;
+            pos2 = i;
+        }
+        else if(games[pos1].players[i].points == best_player) {
+            if(games[pos1].players[i].level > games[pos1].players[pos2].level) {
+                best_player = games[pos1].players[i].points;
+                pos2 = i;
+            }
+        }
+    }
+
+    cout<<"The best player is with username "<<games[pos1].players[pos2].username<<" which plays the game "<<games[pos1].game<<endl;
+}
+
+int main()
+{
+    ComputerGame games[100];
+    int n;
+    cin>>n;
+
+    for(int i=0; i<n; i++) {
+        games[i].readComputerGame();
+    }
+
+    bestPlayer(games,n);
+
+    return 0;
+}
