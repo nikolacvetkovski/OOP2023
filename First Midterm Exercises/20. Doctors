@@ -49,7 +49,7 @@ void najuspesen_doktor(MaticenDoktor *doktori, int n) {
     }
 
     printf("%s ", doktori[max_pos].ime);
-    printf("%.2f %d", max_suma, vkupno_pregledi[max_pos]);
+    printf("%.2f %d", max_suma, max_pregledi);
 }
 
 int main()
