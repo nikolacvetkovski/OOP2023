@@ -1,0 +1,68 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+struct Tanc {
+    char ime[15];
+    char zemja[15];
+
+    void readTanc() {
+        cin>>ime>>zemja;
+    }
+    void printTanc() {
+        cout<<ime<<' '<<zemja<<endl;
+    }
+};
+
+struct Tancer {
+    char ime[20];
+    char prezime[20];
+    Tanc tanci[5];
+
+    void readTancer() {
+        cin>>ime>>prezime;
+        for(int i=0; i<3; i++) {
+            tanci[i].readTanc();
+        }
+    }
+
+    void printTancer() {
+        cout<<ime<<' '<<prezime<<endl;
+        for(int i=0; i<3; i++) {
+            tanci[i].printTanc();
+        }
+    }
+};
+
+void tancuvanje(Tancer *t, int n, char *zemja) {
+    int f = 0;
+    for(int i=0; i<n; i++) {
+            f = 0;
+        for(int j=0; j<3; j++) {
+            if(strcmp(t[i].tanci[j].zemja,zemja) == 0 && f == 0) {
+                f = 1;
+                cout<<t[i].ime<<' '<<t[i].prezime<<", "<<t[i].tanci[j].ime<<endl;
+            }
+        }
+    }
+
+}
+
+int main()
+{
+    Tancer t[100];
+    int n;
+    cin>>n;
+
+    for(int i=0; i<n; i++) {
+        t[i].readTancer();
+    }
+
+    char zemja[20];
+    cin>>zemja;
+
+    tancuvanje(t,n,zemja);
+
+    return 0;
+}
