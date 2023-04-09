@@ -45,35 +45,33 @@ void printNarachka(Narachka n) {
 
 void pecatiFaktura(Narachka n) {
     Proizvod temp;
-    int i,j, vkupno = 0;
+    int i,j, vkupno = 0, f = 1;
 
     printf("Faktura za %s\n", n.imeLice);
-
-    int f = 1;
     for(i=0; i<n.n; i++) {
         if(n.proizvodi[i].dostapnost < n.naracani[i]) {
+            printf("Fakturata ne moze da se izgotvi\n");
             f = 0;
             break;
         }
-
-        else{
+    }
+    
+    if(f == 1) {
+        for(i=0; i<n.n-1; i++) {
             for(j=i+1; j<n.n; j++) {
-                if(strcmp(n.proizvodi[i].kodProizvod, n.proizvodi[j].kodProizvod) == 1) {
+                if(strcmp(n.proizvodi[i].kodProizvod, n.proizvodi[j].kodProizvod) > 1) {
                     temp = n.proizvodi[i];
                     n.proizvodi[i] = n.proizvodi[j];
                     n.proizvodi[j] = temp;
                 }
             }
-
-            vkupno += n.proizvodi[i].cenaProizvod * n.naracani[i];
-            printf("%s %d %d %d\n", n.proizvodi[i].kodProizvod, n.proizvodi[i].cenaProizvod, n.naracani[i], n.proizvodi[i].cenaProizvod * n.naracani[i]);
         }
-    }
-    if(f == 1) {
-         printf("Vkupnata suma na fakturata e %d\n", vkupno);
-    }
-    else {
-        printf("Fakturata ne moze da se izgotvi\n");
+        
+        for(i=0; i<n.n; i++) {
+            printf("%s %d %d %d\n", n.proizvodi[i].kodProizvod, n.proizvodi[i].cenaProizvod, n.naracani[i], n.proizvodi[i].cenaProizvod * n.naracani[i]);
+            vkupno += n.proizvodi[i].cenaProizvod * n.naracani[i];
+        }
+        printf("Vkupnata suma na fakturata e %d", vkupno);
     }
 }
 
