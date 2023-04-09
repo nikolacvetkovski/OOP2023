@@ -38,17 +38,33 @@ void printSkiCenter(SkiCenter s) {
 }
 
 void najgolemKapacitet(SkiCenter *sc, int n) {
-    int i,j, capacity = 0;
+    int i,j, capacity = 0, pos = 0;
+    int max_users = sc[0].skilifts[0].users, max_skilifts = sc[0].n;
 
     for(i=0; i<n; i++) {
+        capacity = 0;
         for(j=0; j<sc[i].n; j++) {
             if(sc[i].skilifts[j].isFunctional == 1) {
                 capacity += sc[i].skilifts[j].users;
             }
         }
+        
+        if(capacity > max_users) {
+            max_users = capacity;
+            pos = i;
+            max_skilifts = sc[i].n;
+        }
+        
+       else if(capacity == max_users) {
+            if(sc[i].n > max_skilifts){
+                max_users = capacity;
+                pos = i;
+                max_skilifts = sc[i].n;
+            }
+        }
     }
 
-    printf("\n%d", capacity);
+    printf("%s\n%s\n%d\n", sc[pos].name, sc[pos].country, max_users);
 }
 
 int main()
