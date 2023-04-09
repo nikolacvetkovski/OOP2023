@@ -65,6 +65,7 @@ void pecatiFaktura(Narachka n) {
                     n.proizvodi[j] = temp;
                 }
             }
+            j--;
         }
         
         for(i=0; i<n.n; i++) {
