@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Proizvod {
+    char kodProizvod[20];
+    int cenaProizvod;
+    int dostapnost;
+}Proizvod;
+
+void readProizvod(Proizvod *p) {
+    scanf("%s %d %d", p->kodProizvod, &p->cenaProizvod, &p->dostapnost);
+}
+void printProizvod(Proizvod p) {
+    printf("%s %d %d\n", p.kodProizvod, p.cenaProizvod, p.dostapnost);
+}
+
+typedef struct Narachka {
+    char imeLice[15];
+    Proizvod proizvodi[10];
+    int naracani[10];
+    int n;
+
+}Narachka;
+
+void readNarachka(Narachka *n) {
+    scanf("%s %d", n->imeLice, &n->n);
+    int i;
+    for(i=0; i<n->n; i++) {
+        readProizvod(&n->proizvodi[i]);
+    }
+    for(i=0; i<n->n; i++) {
+        scanf("%d", &n->naracani[i]);
+    }
+}
+void printNarachka(Narachka n) {
+    printf("%s\n", n.imeLice);
+    int i;
+    for(i=0; i<n.n; i++) {
+        printProizvod(n.proizvodi[i]);
+    }
+    for(i=0; i<n.n; i++) {
+        printf("%d ", n.naracani[i]);
+    }
+}
+
+void pecatiFaktura(Narachka n) {
+    Proizvod temp;
+    int i,j, vkupno = 0;
+
+    printf("Faktura za %s\n", n.imeLice);
+
+    int f = 1;
+    for(i=0; i<n.n; i++) {
+        if(n.proizvodi[i].dostapnost < n.naracani[i]) {
+            f = 0;
+            break;
+        }
+
+        else{
+            for(j=i+1; j<n.n; j++) {
+                if(strcmp(n.proizvodi[i].kodProizvod, n.proizvodi[j].kodProizvod) == 1) {
+                    temp = n.proizvodi[i];
+                    n.proizvodi[i] = n.proizvodi[j];
+                    n.proizvodi[j] = temp;
+                }
+            }
+
+            vkupno += n.proizvodi[i].cenaProizvod * n.naracani[i];
+            printf("%s %d %d %d\n", n.proizvodi[i].kodProizvod, n.proizvodi[i].cenaProizvod, n.naracani[i], n.proizvodi[i].cenaProizvod * n.naracani[i]);
+        }
+    }
+    if(f == 1) {
+         printf("Vkupnata suma na fakturata e %d\n", vkupno);
+    }
+    else {
+        printf("Fakturata ne moze da se izgotvi\n");
+    }
+}
+
+int main()
+{
+    Narachka naracka;
+    readNarachka(&naracka);
+    //printNarachka(naracka);
+
+    pecatiFaktura(naracka);
+
+    return 0;
+}
