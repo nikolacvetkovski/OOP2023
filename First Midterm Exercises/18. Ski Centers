@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+typedef struct SkiLift {
+    char name[15];
+    int users;
+    int isFunctional;
+}SkiLift;
+
+void readSkiLift(SkiLift *s) {
+    scanf("%s %d %d", s->name, &s->users, &s->isFunctional);
+}
+void printSkiLift(SkiLift s) {
+    printf("%s %d %d\n", s.name, s.users, s.isFunctional);
+}
+
+typedef struct SkiCenter {
+    char name[20];
+    char country[20];
+    SkiLift skilifts[20];
+    int n;
+}SkiCenter;
+
+void readSkiCenter(SkiCenter *s) {
+    scanf("%s %s %d", s->name, s->country, &s->n);
+    int i;
+    for(i=0; i<s->n; i++) {
+        readSkiLift(&s->skilifts[i]);
+    }
+}
+void printSkiCenter(SkiCenter s) {
+    printf("%s %s\n", s.name, s.country);
+    int i;
+    for(i=0; i<s.n; i++) {
+        printSkiLift(s.skilifts[i]);
+    }
+}
+
+void najgolemKapacitet(SkiCenter *sc, int n) {
+    int i,j, capacity = 0;
+
+    for(i=0; i<n; i++) {
+        for(j=0; j<sc[i].n; j++) {
+            if(sc[i].skilifts[j].isFunctional == 1) {
+                capacity += sc[i].skilifts[j].users;
+            }
+        }
+    }
+
+    printf("\n%d", capacity);
+}
+
+int main()
+{
+    SkiCenter skicenters[100];
+    int i,n;
+    scanf("%d", &n);
+
+    for(i=0; i<n; i++) {
+        readSkiCenter(&skicenters[i]);
+    }
+
+    najgolemKapacitet(skicenters,n);
+    return 0;
+}
