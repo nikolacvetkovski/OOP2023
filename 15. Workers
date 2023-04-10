@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <string.h>
+
+typedef struct WorkWeek {
+    int workHours[5];
+    int weekNum;
+}WorkWeek;
+
+void readWorkWeek(WorkWeek *week) {
+    int i;
+    for(i=0; i<5; i++) {
+        scanf("%d", &week->workHours[i]);
+    }
+}
+
+typedef struct Worker {
+    char name[50];
+    WorkWeek workWeeks[4];
+}Worker;
+
+void readWorker(Worker *worker) {
+    scanf("%s", worker->name);
+    int i;
+    for(i=0; i<4; i++) {
+        readWorkWeek(&worker->workWeeks[i]);
+    }
+}
+
+int maxWeek(Worker *w) {
+    int i,j, sum_hours = 0 , max = 0 , pos = 0;
+    for(i=0; i<4; i++) {
+        sum_hours = 0;
+        for(j=0; j<5; j++) {
+            sum_hours += w->workWeeks[i].workHours[j];
+        }
+        if(sum_hours > max) {
+            max = sum_hours;
+            pos = i;
+        }
+    }
+    return pos + 1;
+}
+
+void table(Worker *w, int n)  {
+    int i,j,m;
+    int sum_week, total_sum;
+    sum_week = total_sum = 0;
+
+    printf("Week\t");
+    for(i=0; i<4; i++) {
+        printf("%d\t", i+1);
+    }
+    printf("Total\n");
+
+    for(i=0; i<n; i++) {
+        printf("%s\t", w[i].name);
+        sum_week = 0;
+        total_sum = 0;
+        for(j=0; j<4; j++) {
+            sum_week = 0;
+            for(m=0; m<5; m++) {
+                sum_week += w[i].workWeeks[j].workHours[m];
+            }
+            printf("%d\t", sum_week);
+            total_sum += sum_week;
+        }
+        printf("%d\n", total_sum);
+    }
+}
+
+int main() {
+    int n,i;
+    Worker workers[100];
+    scanf("%d", &n);
+
+    for(i=0; i<n; i++) {
+        readWorker(&workers[i]);
+    }
+
+    printf("TABLE\n");
+    table(workers, n);
+    printf("MAX WEEK OF A WORKER: %s\n", workers[n / 2].name);
+    printf("%d\n", maxWeek(&workers[n / 2]));
+    return 0;
+}
