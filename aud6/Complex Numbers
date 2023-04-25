@@ -1,0 +1,59 @@
+#include <iostream>
+
+using namespace std;
+
+class ComplexNumber {
+private:
+    float real;
+    float imaginary;
+
+public:
+    ComplexNumber(float real = 0.0, float imaginary = 0.0) {
+        this->real = real;
+        this->imaginary = imaginary;
+    }
+
+    friend ostream &operator<< (ostream &out, const ComplexNumber &other) {
+        if(other.imaginary >= 0) {
+            out << other.real << "+" << other.imaginary << "i" << endl;
+        }
+        else {
+            out << other.real << other.imaginary << "i" << endl;
+        }
+        return out;
+    }
+
+    friend istream &operator>> (istream &in, ComplexNumber &other) {
+        in >> other.real >> other.imaginary;
+        return in;
+    }
+
+    ComplexNumber &operator+= (ComplexNumber &other) {
+        this->real += other.real;
+        this->imaginary += other.imaginary;
+
+        return *this;
+    }
+
+    ComplexNumber operator+ (ComplexNumber &other) {
+        return ComplexNumber(this->real + other.real, this->imaginary + other.imaginary);
+    }
+};
+
+int main()
+{
+    ComplexNumber n1;
+    ComplexNumber n2;
+
+    cin>>n1>>n2;
+    cout<<n1<<n2;
+
+    cout<< "-----------" << endl;
+
+    cout << (n1 + n2);
+    cout << "-------" << endl;
+    cout << (n1 += n2);
+    cout << n1 << n2;;
+
+    return 0;
+}
