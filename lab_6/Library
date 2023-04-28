@@ -1,0 +1,212 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+class Book {
+private:
+    char *name;
+    int *isbn;
+    int numPages;
+
+public:
+    Book(char *name = "", int *isbn = 0, int numPages = 0) {
+        this->name = new char [strlen(name) + 1];
+        strcpy(this->name, name);
+        this->numPages = numPages;
+
+        if(isbn != 0) {
+            this->isbn = new int [5];
+            for(int i=0; i<5; i++) {
+                this->isbn[i] = isbn[i];
+            }
+        }
+        else {
+            this->isbn = 0;
+        }
+    }
+
+    ~Book() {
+        delete[] name;
+        delete[] isbn;
+    }
+
+    Book(const Book &other) {
+        this->name = new char [strlen(other.name) + 1];
+        strcpy(this->name, other.name);
+        this->isbn = new int [5];
+        for(int i=0; i<5; i++) {
+            this->isbn[i] = other.isbn[i];
+        }
+        this->numPages = other.numPages;
+    }
+
+    Book &operator= (const Book &other) {
+        if(this != &other) {
+            delete[] name;
+            delete[] isbn;
+
+            this->name = new char [strlen(other.name) + 1];
+            strcpy(this->name, other.name);
+            this->isbn = new int [5];
+            for(int i=0; i<5; i++) {
+                this->isbn[i] = other.isbn[i];
+            }
+            this->numPages = other.numPages;
+        }
+        return *this;
+    }
+
+    int getPages() {
+        return numPages;
+    }
+
+    bool operator== (Book &other) {
+        for(int i=0; i<5; i++) {
+            if(this->isbn[i] != other.isbn[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    friend ostream &operator<< (ostream &out, const Book &other) {
+        out << "Title: " << other.name << " ISBN: [ ";
+        for(int i=0; i<5; i++) {
+            out << other.isbn[i] << ' ';
+        }
+        out << "]";
+        return out;
+    }
+};
+
+class BorrowABook {
+private:
+    char name[100];
+    Book *books;
+    int numBooks;
+
+public:
+    BorrowABook(char *name = "") {
+        strcpy(this->name, name);
+        numBooks = 0;
+        books = new Book [numBooks];
+    }
+
+    ~BorrowABook() {
+        delete[] books;
+    }
+
+    BorrowABook(const BorrowABook &other) {
+        strcpy(this->name, other.name);
+        this->numBooks = other.numBooks;
+        this->books = new Book [other.numBooks];
+
+        for(int i=0; i<other.numBooks; i++) {
+            this->books[i] = other.books[i];
+        }
+    }
+
+    BorrowABook &operator= (const BorrowABook &other) {
+        if(this != &other) {
+            delete[] books;
+
+            strcpy(this->name, other.name);
+            this->numBooks = other.numBooks;
+            this->books = new Book [other.numBooks];
+
+            for(int i=0; i<other.numBooks; i++) {
+                this->books[i] = other.books[i];
+            }
+        }
+        return *this;
+    }
+
+    BorrowABook &operator+= (Book &other) {
+        Book *temp = new Book [numBooks + 1];
+        for(int i=0; i<numBooks; i++) {
+            temp[i] = books[i];
+        }
+        temp[numBooks++] = other;
+        delete[] books;
+        books = temp;
+        return *this;
+    }
+
+    BorrowABook &operator-= (Book &other) {
+        int j = 0;
+        for(int i=0; i<numBooks; i++) {
+            if(!(books[i] == other)) {
+                books[j++] = books[i];
+            }
+            else if(books[i].getPages() != other.getPages()) {
+                books[j++] = books[i];
+            }
+        }
+
+        this->numBooks = j;
+        return *this;
+    }
+
+    void printNumberOfPages(int max) {
+        cout << name << endl;
+        for(int i=0; i<numBooks; i++) {
+            if(books[i].getPages() >= max) {
+                cout << books[i];
+            }
+        }
+    }
+
+    /*friend ostream &operator<< (ostream &out, const BorrowABook &other) {
+        out << other.name << endl;
+        for(int i=0; i<other.numBooks; i++) {
+            out << other.books[i] << endl;
+        }
+        return out;
+    }*/
+};
+
+int main()
+{
+    BorrowABook library("FINKI-Library");
+    int n;
+    cin>>n;
+
+    for (int i=0;i<n;i++)
+    {
+        char title[100];
+        int isbn[5];
+        int pages;
+
+        cin>>title;
+
+        for (int i=0;i<5;i++)
+            cin>>isbn[i];
+
+        cin>>pages;
+
+        Book nov=Book(title,isbn,pages);
+
+        //adding a new book
+        library+=nov;
+    }
+
+    //the book which has the same isbn as some previous one
+    char title[100];
+    int isbn[5];
+    int pages;
+    cin>>title;
+    for (int i=0;i<5;i++)
+        cin>>isbn[i];
+    cin>>pages;
+
+    Book greshka=Book(title,isbn,pages);
+    library+=greshka;
+
+    //deleting a book
+    library-=greshka;
+
+    library.printNumberOfPages(150);
+
+    return 0;
+}
