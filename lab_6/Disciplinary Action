@@ -76,7 +76,7 @@ public:
     }
 
     bool operator>= (DisciplinaryAction &other) {
-        return this->numSession > other.numSession;
+        return this->numSession >= other.numSession;
     }
 };
 
