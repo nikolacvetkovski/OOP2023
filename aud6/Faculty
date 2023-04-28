@@ -1,0 +1,239 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+class Student {
+private:
+    char *name;
+    int *grades;
+    int numGrades;
+    int year;
+
+public:
+    Student(char *name = "Nikola", int year = 2020) {
+        this->name = new char [strlen(name) + 1];
+        strcpy(this->name, name);
+        this->year = year;
+
+        this->numGrades = 0;
+        this->grades = new int [this->numGrades];
+    }
+
+    Student(const Student &other) {
+        this->name = new char [strlen(other.name) + 1];
+        strcpy(this->name, other.name);
+        this->year = other.year;
+
+        this->numGrades = other.numGrades;
+        this->grades = new int [this->numGrades];
+        for(int i=0; i<this->numGrades; i++) {
+            this->grades[i] = other.grades[i];
+        }
+    }
+
+    Student &operator= (const Student &other) {
+        if(this != &other) {
+            delete[] name;
+            delete[] grades;
+
+            this->name = new char [strlen(other.name) + 1];
+            strcpy(this->name, other.name);
+            this->year = other.year;
+
+            this->numGrades = other.numGrades;
+            this->grades = new int [this->numGrades];
+            for(int i=0; i<this->numGrades; i++) {
+                this->grades[i] = other.grades[i];
+            }
+        }
+        return *this;
+    }
+
+    ~Student() {
+        delete[] name;
+        delete[] grades;
+    }
+
+    Student &operator+= (int grade) {
+        int *temp = new int [numGrades + 1];
+        for(int i=0; i<numGrades; i++) {
+            temp[i] = grades[i];
+        }
+        temp[numGrades++] = grade;
+        delete[] grades;
+        grades = temp;
+        return *this;
+    }
+
+    double getAverage() {
+        if(numGrades == 0) {
+            return 5.0;
+        }
+
+        int sum = 0;
+        for(int i=0; i<this->numGrades; i++) {
+            sum += this->grades[i];
+        }
+        return (double)sum / numGrades;
+    }
+
+    Student &operator++ () {
+        ++this->year;
+
+        return *this;
+    }
+
+    friend ostream &operator<< (ostream &out, const Student &other) {
+        out << "Name: " << other.name << endl;
+        out << "Year: " << other.year << endl;
+
+        return out;
+    }
+
+    bool operator> (Student &other) {
+        return this->getAverage() > other.getAverage();
+    }
+};
+
+class Faculity {
+private:
+    Student *students;
+    int numStudents;
+
+public:
+    Faculity() {
+        this->numStudents = 0;
+        this->students = new Student [numStudents];
+    }
+
+    ~Faculity() {
+        delete[] students;
+    }
+
+    Faculity(const Faculity &other) {
+        this->numStudents = other.numStudents;
+        this->students = new Student [numStudents];
+
+        for(int i=0; i<this->numStudents; i++) {
+            this->students[i] = other.students[i];
+        }
+    }
+
+    Faculity &operator= (const Faculity &other) {
+        if(this != &other) {
+            delete[] students;
+
+            this->numStudents = other.numStudents;
+            this->students = new Student [this->numStudents];
+
+            for(int i=0; i<this->numStudents; i++) {
+                this->students[i] = other.students[i];
+            }
+        }
+        return *this;
+    }
+
+    Faculity &operator+= (const Student &other) {
+        Student *temp = new Student [numStudents + 1];
+        for(int i=0; i<numStudents; i++) {
+            temp[i] = students[i];
+        }
+        temp[numStudents++] = other;
+        delete[] students;
+        students = temp;
+        return *this;
+    }
+
+    Faculity &operator++ () {
+        for(int i=0; i<numStudents; i++) {
+            ++students[i];
+        }
+
+        return *this;
+    }
+
+    friend ostream &operator<< (ostream &out, const Faculity &other) {
+        for(int i=0; i<other.numStudents; i++) {
+            out << other.students[i];
+        }
+        return out;
+    }
+
+    void prize() {
+        for(int i=0; i<numStudents; i++) {
+            if(students[i].getAverage() == 10.0) {
+                cout << students[i];
+            }
+        }
+    }
+
+    void highestAverage() {
+        Student max = students[0];
+        for(int i=1; i<numStudents; i++) {
+            if(students[i] > max) {
+                max = students[i];
+            }
+        }
+        cout << max.getAverage() << endl;
+    }
+};
+
+int main()
+{
+    Student s("Nikola", 3);
+    //cout << s;
+    s += 6;
+    s += 8;
+    s += 10;
+    s += 7;
+
+    Student t("Neda", 3);
+    t += 10;
+    t += 10;
+    t += 10;
+    t += 10;
+
+    Student r("Petar", 1);
+    r += 10;
+    r += 9;
+    r += 10;
+    r += 8;
+
+    Student v("Kiril", 2);
+    v += 10;
+    v += 10;
+    v += 10;
+    v += 10;
+
+    Faculity faculity;
+
+    faculity += s;
+    faculity += t;
+    faculity += r;
+    faculity += v;
+
+    cout << faculity;
+    cout << "---------" << endl;
+    ++faculity;
+    cout << faculity;
+    cout << "---------" << endl;
+    faculity.prize();
+    cout << "---------" << endl;
+    faculity.highestAverage();
+
+    /*cout << "------" << endl;
+    cout << s;
+    cout << "------" << endl;
+    cout << ++s;
+    cout << "------" << endl;
+    Student sCopy(s);
+    sCopy += 10;
+    sCopy += 10;
+    sCopy += 9;
+    cout << s;
+    cout << sCopy;
+    cout << (s > sCopy);*/
+
+    return 0;
+}
