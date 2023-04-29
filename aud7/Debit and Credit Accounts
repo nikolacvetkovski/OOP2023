@@ -1,0 +1,152 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+class DebitAccount {
+protected:
+    char owner[50];
+    char accountNumber[16];
+    double balance;
+
+public:
+    DebitAccount(char *owner = "Nikola Cvetkovski", char *accountNumber = "111111111111111", double balance = 2000.5) {
+        strcpy(this->owner, owner);
+        strcpy(this->accountNumber, accountNumber);
+        this->balance = balance;
+    }
+
+    DebitAccount(const DebitAccount &other) {
+        strcpy(this->owner, other.owner);
+        strcpy(this->accountNumber, other.accountNumber);
+        this->balance = other.balance;
+    }
+
+    friend ostream &operator<< (ostream &out, const DebitAccount &other) {
+        out << "Name: " << other.owner << endl;
+        out << "Account number: " << other.accountNumber << endl;
+        out << "Balance: " << other.balance << endl;
+
+        return out;
+    }
+
+    DebitAccount &operator+= (double amount) {
+        balance += amount;
+
+        return *this;
+    }
+
+    //2000 1000
+    DebitAccount &operator-= (double amount)  {
+        if(balance < amount) {
+            cout << "Not enough funds! Withdrawing: " << balance << endl;
+            balance = 0;
+        }
+        else {
+            cout << "Withdrawing: " << amount << endl;
+            balance -= amount;
+        }
+
+        return *this;
+    }
+};
+
+class CreditAccount : public DebitAccount {
+private:
+    const double interest = 0.05;
+    double limit;
+    double debt;
+
+public:
+    CreditAccount(char *owner = "Nikola Cvetkovski", char *accountNumber = "111111111111111", double balance = 2000.5, double limit = 10000.0) : DebitAccount(owner,accountNumber,balance) {
+        this->limit = limit;
+        this->debt = 3000;
+    }
+
+    CreditAccount(const CreditAccount &other) : DebitAccount(other) {
+        this->limit = other.limit;
+        this->debt = other.debt;
+    }
+
+    CreditAccount(const DebitAccount &other, double limit = 10000) : DebitAccount(other) {
+        this->limit = limit;
+        this->debt = 3000;
+    }
+
+    friend ostream &operator<< (ostream &out, const CreditAccount &other) {
+        DebitAccount temp (other);
+        out << temp;
+        out << "Debt: " << other.debt << endl;
+        out << "Limit: " << other.limit << endl;
+
+        return out;
+    }
+
+    //amount: 3000, debt: 4000, balance: 1000
+    CreditAccount &operator+= (int amount) {
+        if(debt <= amount) {
+            balance += (amount-debt);
+            debt = 0;
+        }
+        else {
+            debt -= amount;
+        }
+
+        return *this;
+    }
+
+    //amount: 2000, debt: 0, balance: 1000, limit: 10000
+    CreditAccount &operator-= (int amount) {
+        if(balance >= amount) {
+            balance -= amount;
+        }
+
+        else {
+            double diff = amount - balance;
+            if((diff + debt) < limit) {
+                balance = 0;
+                debt += (diff + (diff * interest));
+            }
+            else {
+                cout << "You have exceeded your credit card limit!" << endl;
+            }
+        }
+        return *this;
+    }
+};
+
+int main()
+{
+    DebitAccount da1;
+    DebitAccount da2("Neda Jonovska", "222222222222222", 2500.0);
+
+    /*cout << da1;
+    cout << da2;
+
+    cout << "----------------" << endl;
+    da1+=2000.5;
+    cout << da1;
+
+    da1-=4001;
+    cout << da1;*/
+
+    CreditAccount ca(da2,10000);
+    cout << ca;
+
+    ca+= 4000;
+    cout << ca;
+
+    ca-= 4500;
+    cout << ca;
+
+    ca-= 4500;
+    cout << ca;
+
+    ca-= 4500;
+    cout << ca;
+
+    ca+= 10000;
+    cout << ca;
+
+    return 0;
+}
