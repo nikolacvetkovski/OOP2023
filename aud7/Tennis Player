@@ -1,0 +1,80 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+class TennisPlayer {
+protected:
+    char name[50];
+    bool playsinLeague;
+
+public:
+    TennisPlayer(char *name = "Nikola Cvetkovski", bool playsinLeague = false) {
+        strcpy(this->name, name);
+        this->playsinLeague = playsinLeague;
+    }
+
+    TennisPlayer (const TennisPlayer &other) {
+        strcpy(this->name, other.name);
+        this->playsinLeague = other.playsinLeague;
+    }
+
+    friend ostream &operator<< (ostream &out, const TennisPlayer &other) {
+        out << "Tennis player: " << other.name;
+        if(other.playsinLeague == true) {
+            out << " plays in league";
+        }
+        else {
+            out << " doesn't play in league";
+        }
+
+        return out;
+    }
+};
+
+class RankedTennisPlayer : public TennisPlayer {
+private:
+    int rank;
+
+public:
+    RankedTennisPlayer(char *name = "Nikola Cvetkovski", bool playsinLeague = false, int rank = 100) : TennisPlayer(name, playsinLeague) {
+        this->rank = rank;
+    }
+
+    RankedTennisPlayer(const RankedTennisPlayer &other) : TennisPlayer(other) {
+        this->rank = other.rank;
+    }
+
+    RankedTennisPlayer(const TennisPlayer &other, int rank) : TennisPlayer(other) {
+        this->rank = rank;
+    }
+
+    friend ostream &operator<< (ostream &out, const RankedTennisPlayer &other) {
+        out << "Ranked";
+        TennisPlayer tmp(other);
+        out << tmp << ", is ranked " << other.rank;
+        return out;
+    }
+};
+
+int main()
+{
+    /*TennisPlayer tp1;
+    TennisPlayer tp2("Novak Djokovic", true);
+
+    cout << tp1 << endl;
+    cout << tp2;*/
+
+    /*TennisPlayer tp("Novak Djokovic", true);
+    cout << tp << endl;
+    RankedTennisPlayer rtp (tp, 1);
+    cout << rtp << endl;*/
+
+    RankedTennisPlayer rtp ("Novak Djokovic", true, 1);
+    cout << rtp << endl;
+
+    /*TennisPlayer tp = rtp;
+    cout << tp;*/
+
+    return 0;
+}
