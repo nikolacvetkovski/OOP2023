@@ -1,0 +1,186 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+class NBAPlayer {
+protected:
+    char *namePlayer;
+    char nameTeam[40];
+    double avgPoints;
+    double avgAssists;
+    double avgRebounds;
+
+public:
+    NBAPlayer(char *namePlayer = "", char *nameTeam = "", double avgPoints = 0, double avgAssists = 0, double avgRebounds = 0) {
+        this->namePlayer = new char [strlen(namePlayer) + 1];
+        strcpy(this->namePlayer, namePlayer);
+        strcpy(this->nameTeam, nameTeam);
+        this->avgPoints = avgPoints;
+        this->avgAssists = avgAssists;
+        this->avgRebounds = avgRebounds;
+    }
+
+    ~NBAPlayer() {
+        delete[] namePlayer;
+    }
+
+    NBAPlayer(const NBAPlayer &other) {
+        this->namePlayer = new char [strlen(other.namePlayer) + 1];
+        strcpy(this->namePlayer, other.namePlayer);
+        strcpy(this->nameTeam, other.nameTeam);
+        this->avgPoints = other.avgPoints;
+        this->avgAssists = other.avgAssists;
+        this->avgRebounds = other.avgRebounds;
+    }
+
+    NBAPlayer &operator= (const NBAPlayer &other) {
+        if(this != &other) {
+            delete[] namePlayer;
+
+            this->namePlayer = new char [strlen(other.namePlayer) + 1];
+            strcpy(this->namePlayer, other.namePlayer);
+            strcpy(this->nameTeam, other.nameTeam);
+            this->avgPoints = other.avgPoints;
+            this->avgAssists = other.avgAssists;
+            this->avgRebounds = other.avgRebounds;
+        }
+        return *this;
+    }
+
+    double rating() {
+        return (avgPoints / 100) * 45 + (avgAssists / 100) * 30 + (avgRebounds / 100) * 25;
+    }
+
+    void print() {
+        cout << namePlayer << " - " << nameTeam << endl;
+        cout << "Points: " << avgPoints << endl;
+        cout << "Assists: " << avgAssists << endl;
+        cout << "Rebounds: " << avgRebounds << endl;
+        cout << "Rating: " << rating() << endl;
+    }
+};
+
+class AllStarPlayer : public NBAPlayer {
+private:
+    double avgAllStarPoints;
+    double avgAllStarAssists;
+    double avgAllStarRebounds;
+
+public:
+    AllStarPlayer(char *namePlayer = "", char *nameTeam = "", double avgPoints = 0, double avgAssists = 0, double avgRebounds = 0, double avgAllStarPoints = 0, double avgAllStarAssists = 0, double avgAllStarRebounds = 0) : NBAPlayer(namePlayer, nameTeam, avgPoints, avgAssists, avgRebounds) {
+        this->avgAllStarPoints = avgAllStarPoints;
+        this->avgAllStarAssists = avgAllStarAssists;
+        this->avgAllStarRebounds = avgAllStarRebounds;
+    }
+
+    AllStarPlayer(const AllStarPlayer &other) : NBAPlayer(other) {
+        this->avgAllStarPoints = other.avgAllStarPoints;
+        this->avgAllStarAssists = other.avgAllStarAssists;
+        this->avgAllStarRebounds = other.avgAllStarRebounds;
+    }
+
+    ~AllStarPlayer() {
+        delete[] namePlayer;
+    }
+
+    AllStarPlayer &operator= (const AllStarPlayer &other) {
+        if(this != &other) {
+            delete[] namePlayer;
+
+            NBAPlayer::operator=(other);
+            this->avgAllStarPoints = other.avgAllStarPoints;
+            this->avgAllStarAssists = other.avgAllStarAssists;
+            this->avgAllStarRebounds = other.avgAllStarRebounds;
+        }
+        return *this;
+    }
+
+    AllStarPlayer(const NBAPlayer &other, double avgAllStarPoints, double avgAllStarAssists, double avgAllStarRebounds) : NBAPlayer(other) {
+        this->avgAllStarPoints = avgAllStarPoints;
+        this->avgAllStarAssists = avgAllStarAssists;
+        this->avgAllStarRebounds = avgAllStarRebounds;
+    }
+
+    double allStarRating() {
+        return (avgAllStarPoints / 100) * 30 + (avgAllStarAssists / 100) * 40 + (avgAllStarRebounds / 100) * 30;
+    }
+
+    double rating() {
+        return (NBAPlayer::rating() + allStarRating()) / 2;
+    }
+
+    void print() {
+        NBAPlayer::print();
+        cout << "All Star Rating: " << allStarRating() << endl;
+        cout << "New Rating: " << rating() << endl;
+    }
+
+};
+
+int main ()
+{
+    char name[50];
+    char team[40];
+    double points;
+    double assists;
+    double rebounds;
+    double allStarPoints;
+    double allStarAssists;
+    double allStarRebounds;
+
+    NBAPlayer * players = new NBAPlayer[5];
+    AllStarPlayer * asPlayers = new AllStarPlayer[5];
+    int n;
+    cin >> n;
+
+    if (n == 1) {
+
+        cout << "NBA PLAYERS:" << endl;
+        cout << "=====================================" << endl;
+        for (int i = 0; i < 5; ++i) {
+            cin >> name >> team >> points >> assists >> rebounds;
+            players[i] = NBAPlayer(name,team,points,assists,rebounds);
+            players[i].print();
+        }
+    }
+    else if (n == 2) {
+
+        for (int i=0; i < 5; ++i){
+            cin >> name >> team >> points >> assists >> rebounds;
+            cin >> allStarPoints >> allStarAssists >> allStarRebounds;
+            players[i] = NBAPlayer(name,team,points,assists,rebounds);
+            asPlayers[i] = AllStarPlayer(players[i],allStarPoints,allStarAssists,allStarRebounds);
+        }
+
+        cout << "NBA PLAYERS:" << endl;
+        cout << "=====================================" << endl;
+        for (int i=0; i < 5; ++i)
+            players[i].print();
+
+        cout << "ALL STAR PLAYERS:" << endl;
+        cout << "=====================================" << endl;
+        for (int i=0; i < 5; ++i)
+            asPlayers[i].print();
+
+    }
+    else if (n == 3) {
+
+        for (int i=0; i < 5; ++i){
+            cin >> name >> team >> points >> assists >> rebounds;
+            cin >> allStarPoints >> allStarAssists >> allStarRebounds;
+            asPlayers[i] = AllStarPlayer(name, team, points, assists, rebounds,
+                                         allStarPoints,allStarAssists,allStarRebounds);
+        }
+        cout << "ALL STAR PLAYERS:" << endl;
+        cout << "=====================================" << endl;
+        for (int i=0; i < 5; ++i)
+            asPlayers[i].print();
+
+    }
+
+    delete [] players;
+    delete [] asPlayers;
+
+    return 0;
+}
