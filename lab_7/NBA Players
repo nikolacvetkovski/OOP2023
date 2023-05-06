@@ -81,12 +81,10 @@ public:
     }
 
     ~AllStarPlayer() {
-        delete[] namePlayer;
     }
 
     AllStarPlayer &operator= (const AllStarPlayer &other) {
         if(this != &other) {
-            delete[] namePlayer;
 
             NBAPlayer::operator=(other);
             this->avgAllStarPoints = other.avgAllStarPoints;
