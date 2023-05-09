@@ -1,0 +1,119 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+class HotelReservation {
+protected:
+    int numDays;
+    int numGuests;
+    char contact[50];
+
+public:
+    HotelReservation(int numDays = 0, int numGuests = 0, char *contact = "") {
+        this->numDays = numDays;
+        this->numGuests = numGuests;
+        strcpy(this->contact, contact);
+    }
+
+    HotelReservation(const HotelReservation &other) {
+        this->numDays = other.numDays;
+        this->numGuests = other.numGuests;
+        strcpy(this->contact, other.contact);
+    }
+
+    virtual int payment() {
+        return numDays * numGuests * 25;
+    }
+
+    virtual int payment(int deposit) {
+        if(deposit > payment()) {
+            return deposit - payment();
+        }
+        else {
+            return deposit - payment();
+        }
+    }
+};
+
+class SemiBoardHotelReservation : public HotelReservation {
+public:
+    SemiBoardHotelReservation(int numDays = 0, int numGuests = 0, char *contact = "") : HotelReservation(numDays,numGuests,contact) {
+    }
+
+    SemiBoardHotelReservation(const SemiBoardHotelReservation &other) : HotelReservation(other) {
+    }
+
+    int payment() {
+        return HotelReservation::payment() * 5;
+    }
+
+    int payment(int deposit) {
+        int total = HotelReservation::payment() * 5;
+        if(deposit >= total) {
+            return deposit - total;
+        }
+        else {
+            return deposit - total;
+        }
+    }
+};
+
+class Hotel {
+private:
+    char nameHotel[30];
+    int balance;
+
+public:
+    Hotel(char *nameHotel = "", int balance = 0) {
+        strcpy(this->nameHotel, nameHotel);
+        this->balance = balance;
+    }
+
+    Hotel(const Hotel &other) {
+        strcpy(this->nameHotel, other.nameHotel);
+        this->balance = other.balance;
+    }
+
+    int payforReservation(HotelReservation &hr, int deposit) {
+        balance += hr.payment();
+
+        return hr.payment(deposit);
+    }
+
+    void print() {
+        cout << nameHotel << ' ' << balance << endl;
+    }
+};
+
+int main()
+{
+    Hotel hotel("FINKI", 0);
+
+    int n;
+    cin>>n;
+
+    HotelReservation **reservations = new HotelReservation *[n];
+
+    for(int i=0; i<n; i++) {
+        int type, days, guests, deposit;
+        char contact[50];
+
+        cin>>type>>days>>guests>>contact>>deposit;
+
+        if(type == 1) {
+            reservations[i] = new HotelReservation(days,guests,contact);
+        }
+        else {
+            reservations[i] = new SemiBoardHotelReservation(days,guests,contact);
+        }
+
+        cout << "Name: " << contact << ' ' << "Guests: " << guests << ' ' << "Days: " << days << ' ' << "Price: " << reservations[i]->payment() << endl;
+        cout << "Change from the payment: " << hotel.payforReservation(*reservations[i], deposit) << endl;
+    }
+
+    cout << "Hotel state after all the reservations were payed" << endl;
+    hotel.print();
+
+    return 0;
+}
