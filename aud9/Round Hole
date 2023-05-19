@@ -1,0 +1,95 @@
+#include <iostream>
+#include <cstring>
+#include <cmath>
+
+using namespace std;
+
+class RoundPeg {
+protected:
+    float radius;
+
+public:
+    RoundPeg(float radius = 0.0) {
+        this->radius = radius;
+    }
+
+    virtual float getRadius() {
+        return radius;
+    }
+
+    void setRadius(float radius) {
+        this->radius = radius;
+    }
+};
+
+class SquarePeg {
+protected:
+    float side;
+
+public:
+    SquarePeg(float side = 0.0) {
+        this->side = side;
+    }
+
+    float getSide() {
+        return side;
+    }
+
+    void setSide(float side) {
+        this->side = side;
+    }
+};
+
+class SquarePegAdapter : public SquarePeg , public RoundPeg {
+public:
+    SquarePegAdapter(float side = 0.0) : SquarePeg(side) {}
+
+    float getRadius() {
+        return side * sqrt(2) / 2;
+    }
+};
+
+class RoundHole {
+private:
+    float radius;
+
+public:
+    RoundHole(float radius = 0.0) {
+        this->radius = radius;
+    }
+
+    float getRadius() {
+        return radius;
+    }
+
+    void setRadius(float radius) {
+        this->radius = radius;
+    }
+
+    bool fits(RoundPeg *roundPeg) {
+        return this->radius >= roundPeg->getRadius();
+    }
+};
+
+int main()
+{
+    RoundHole hole(10);
+
+    RoundPeg *roundpeg1 = new RoundPeg(4.2);
+    RoundPeg *roundpeg2 = new RoundPeg(8.5);
+    RoundPeg *roundpeg3 = new RoundPeg(11);
+
+    cout << hole.fits(roundpeg1) << endl;
+    cout << hole.fits(roundpeg2) << endl;
+    cout << hole.fits(roundpeg3) << endl;
+
+    RoundPeg *roundpeg4 = new SquarePegAdapter(5.0);
+    RoundPeg *roundpeg5 = new SquarePegAdapter(25);
+    RoundPeg *roundpeg6 = new SquarePegAdapter(2.4);
+
+    cout << hole.fits(roundpeg4) << endl;
+    cout << hole.fits(roundpeg5) << endl;
+    cout << hole.fits(roundpeg6) << endl;
+
+    return 0;
+}
