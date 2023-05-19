@@ -1,0 +1,125 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+class Employee {
+protected:
+    char name[50];
+    int age;
+
+public:
+    Employee(char *name = "", int age = 0) {
+        strcpy(this->name, name);
+        this->age = age;
+    }
+
+    virtual void displayInfo() {
+        cout << "Name: " << name << endl;
+        cout << "Age: " << age << endl;
+    }
+};
+
+class Payable {
+protected:
+    double salary;
+
+public:
+    Payable(double salary = 0.0) {
+        this->salary = salary;
+    }
+
+    virtual double calculateSalary() = 0;
+};
+
+class Developer : public Employee, public Payable {
+private:
+    char prog_language[50];
+
+public:
+    Developer(char * name = "", int age = 0, double salary = 0.0, char * prog_language = "") : Employee(name,age) , Payable(salary) {
+        strcpy(this->prog_language, prog_language);
+    }
+
+    double calculateSalary() {
+        return salary - (salary * 0.1);
+    }
+
+    virtual void displayInfo() {
+        cout << "-- Developer Information --" << endl;
+        cout << "Name: " << name << endl;
+        cout << "Age: " << age << endl;
+        cout << "Salary: $" << calculateSalary() << endl;
+        cout << "Programming language: " << prog_language << endl;
+    }
+};
+
+class Manager : public Employee, public Payable {
+private:
+    int numofDepartments;
+
+public:
+    Manager(char * name = "", int age = 0, double salary = 0.0, int numofDepartments = 0) : Employee(name,age) , Payable(salary) {
+        this->numofDepartments = numofDepartments;
+    }
+
+    double calculateSalary() {
+        return salary + (numofDepartments * (salary * 0.05));
+    }
+
+    virtual void displayInfo() {
+        cout << "-- Manager Information --" << endl;
+        cout << "Name: " << name << endl;
+        cout << "Age: " << age << endl;
+        cout << "Salary: $" << calculateSalary() << endl;
+        cout << "Number of Departments: " << numofDepartments << endl;
+    }
+};
+
+double biggestSalary(Payable **payable, int n) {
+    double max_salary = payable[0]->calculateSalary();
+    int max_pos = 0;
+
+    for(int i=1; i<n; i++) {
+        if(payable[i]->calculateSalary() > max_salary) {
+            max_salary = payable[i]->calculateSalary();
+            max_pos = i;
+        }
+    }
+
+    return payable[max_pos]->calculateSalary();
+}
+
+int main()
+{
+    Payable* payable[5];
+    Developer developers[5];
+    Manager managers[5];
+    int j=0, k=0;
+    for(int i=0; i<5; i++)
+    {
+        char name[50];
+        int age;
+        double salary;
+        cin>>name>>age>>salary;
+        if(i%2==0)
+        {
+            char programmingLanguage[50];
+            cin>>programmingLanguage;
+            developers[j]=Developer(name, age, salary, programmingLanguage);
+            developers[j].displayInfo();
+            payable[i]=&developers[j];
+            j++;
+        }
+        else {
+            int numberOfDepartments;
+            cin>>numberOfDepartments;
+            managers[k]=Manager(name, age, salary, numberOfDepartments);
+            managers[k].displayInfo();
+            payable[i]=&managers[k];
+            k++;
+        }
+    }
+    cout<<endl<<"Biggest Salary: "<<biggestSalary(payable, 5);
+    return 0;
+}
