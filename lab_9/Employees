@@ -50,7 +50,7 @@ public:
         cout << "Name: " << name << endl;
         cout << "Age: " << age << endl;
         cout << "Salary: $" << calculateSalary() << endl;
-        cout << "Programming language: " << prog_language << endl;
+        cout << "Programming Language: " << prog_language << endl;
     }
 };
 
