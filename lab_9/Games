@@ -109,6 +109,24 @@ Game *mostComplexCardGame(Game **games, int n) {
     return maxGame;
 }
 
+/* Game *mostComplexCardGame(Game **games, int n) {
+    Game * maxGame = nullptr;
+    int maxValue = 0;
+
+    for (int i=0; i<n; i++) {
+        CardGame *casted = dynamic_cast<CardGame *>(games[i]);
+
+        if(casted != 0) {
+            if(casted->complexity() > maxValue) {
+                maxValue = casted->complexity();
+                maxGame = casted;
+            }
+        }
+    }
+
+    return maxGame;
+} */
+
 int main ()
 {
     char title [50];
