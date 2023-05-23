@@ -46,7 +46,9 @@ public:
             throw NegativeValueException(this->nameProduct);
         }
 
-        this->price = newPrice;
+        else {
+            this->price = newPrice;
+        }
     }
 };
 
