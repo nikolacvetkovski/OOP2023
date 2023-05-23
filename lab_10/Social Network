@@ -12,7 +12,7 @@ public:
     }
 
     void showMessage(){
-        cout << this->username << " is already taken! Try again!" << endl;
+        cout << "This username is already taken." << endl;
     }
 };
 
@@ -26,7 +26,7 @@ public:
     }
 
     void showMessage() {
-        cout << this->username << " is not a member of this social network!" << endl;
+        cout << "User with username " << username << " was not found." << endl;
     }
 };
 
@@ -40,7 +40,7 @@ public:
     }
 
     void showMessage() {
-        cout << this->username << " has exceeded his limit for adding new friends!" << endl;
+        cout << "Can't have more than 3 friends." << endl;
     }
 };
 
@@ -111,9 +111,15 @@ public:
 
         for (int i = 0; i < n; i++) {
             if (strcmp(users[i].username, firstUsername) == 0) {
+                    if(users[i].friends >= User::MAX_LIMIT_FRIENDS) {
+                        throw FriendsLimitExceededException(users[i].username);
+                    }
                     firstFound = true;
                 for (int j = 0; j < n; j++) {
                     if (strcmp(users[j].username, secondUsername) == 0) {
+                        if(users[i].friends >= User::MAX_LIMIT_FRIENDS) {
+                            throw FriendsLimitExceededException(users[j].username);
+                        }
                         secondFound = true;
                         ++users[i];
                         ++users[j];
@@ -123,11 +129,13 @@ public:
             }
         }
 
-        if(!firstFound) {
+        if(!firstFound && !secondFound) {
+            throw UserNotFoundException(secondUsername);
+        }
+        else if(!firstFound) {
             throw UserNotFoundException(firstUsername);
         }
-
-        if(!secondFound) {
+        else if(!secondFound) {
             throw UserNotFoundException(secondUsername);
         }
     }
@@ -170,6 +178,9 @@ int main() {
             sn.friendRequest(username1, username2);
         }
         catch (UserNotFoundException e) {
+            e.showMessage();
+        }
+        catch (FriendsLimitExceededException e) {
             e.showMessage();
         }
     }
