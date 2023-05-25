@@ -1,0 +1,233 @@
+#include<iostream>
+#include<cstring>
+using namespace std;
+
+class Book {
+protected:
+    char ISBN[20];
+    char title[50];
+    char author[30];
+    float priceInUSD;
+
+public:
+    Book(char *ISBN = "", char *title = "", char *author = "", float priceInUSD = 0.0) {
+        strcpy(this->ISBN, ISBN);
+        strcpy(this->title, title);
+        strcpy(this->author, author);
+        this->priceInUSD = priceInUSD;
+    }
+
+    virtual float bookPrice() {
+        return priceInUSD;
+    }
+
+    bool operator> (Book &other) {
+        return this->bookPrice() > other.bookPrice();
+    }
+
+    friend ostream &operator<< (ostream &out, Book &other) {
+        out<<other.ISBN<<": "<<other.title<<", "<<other.author<<" "<< other.bookPrice()<<endl;
+
+        return out;
+    }
+
+    void setISBN(char *ISBN) {
+        strcpy(this->ISBN, ISBN);
+    }
+};
+
+class OnlineBook : public Book {
+private:
+    char *url;
+    int sizeInMB;
+
+public:
+    OnlineBook(char *ISBN = "", char *title = "", char *author = "", float priceInUSD = 0.0,
+               char *url = "", int sizeInMB = 0) : Book(ISBN,title,author,priceInUSD) {
+                    this->url = new char [strlen(url) + 1];
+                    strcpy(this->url, url);
+                    this->sizeInMB = sizeInMB;
+               }
+
+        float bookPrice() {
+            float regularPrice = Book::bookPrice();
+            if(sizeInMB > 20) {
+                return regularPrice + (regularPrice * 0.2);
+            }
+
+            return regularPrice;
+    }
+};
+
+class PrintBook : public Book {
+private:
+    float weightInKG;
+    bool inStock;
+
+public:
+    PrintBook(char *ISBN = "", char *title = "", char *author = "", float priceInUSD = 0.0,
+               float weightInKG = 0.0, bool inStock = false) : Book(ISBN,title,author,priceInUSD) {
+                    this->weightInKG = weightInKG;
+                    this->inStock = inStock;
+               }
+
+        float bookPrice() {
+            float regularPrice = Book::bookPrice();
+            if(weightInKG > 0.7) {
+                return regularPrice + (regularPrice * 0.15);
+            }
+
+            return regularPrice;
+    }
+};
+
+void mostExpensiveBook (Book** books, int n) {
+    int onlinebr = 0, printedbr = 0;
+    Book *maxBook = books[0];
+
+    for(int i=0; i<n; i++) {
+        OnlineBook *casted = dynamic_cast<OnlineBook *>(books[i]);
+
+        if(casted !=0) {
+            onlinebr++;
+        }
+        else {
+            printedbr++;
+        }
+    }
+
+    for(int i=1; i<n; i++) {
+        if(*books[i] > *maxBook) {
+            maxBook = books[i];
+        }
+    }
+    
+    cout<<"FINKI-Education"<<endl;
+    cout << "Total number of online books: " << onlinebr << endl;
+    cout << "Total number of print books: " << printedbr << endl;
+    cout << "The most expensive book is: " << endl;
+    cout << *maxBook;
+}
+
+int main(){
+
+	char isbn[20], title[50], author[30], url[100];
+	int size, tip;
+	float price, weight;
+	bool inStock;
+	Book  **books;
+	int n;
+
+	int testCase;
+	cin >> testCase;
+
+	if (testCase == 1){
+		cout << "====== Testing OnlineBook class ======" << endl;
+		cin >> n;
+		books = new Book *[n];
+
+		for (int i = 0; i < n; i++){
+			cin >> isbn;
+			cin.get();
+			cin.getline(title, 50);
+			cin.getline(author, 30);
+			cin >> price;
+			cin >> url;
+			cin >> size;
+			cout << "CONSTRUCTOR" << endl;
+			books[i] = new OnlineBook(isbn, title, author, price, url, size);
+			cout << "OPERATOR <<" << endl;
+			cout << *books[i];
+		}
+		cout << "OPERATOR >" << endl;
+		cout << "Rezultat od sporedbata e: " << endl;
+		if (*books[0] > *books[1])
+			cout << *books[0];
+		else
+			cout << *books[1];
+	}
+	if (testCase == 2){
+		cout << "====== Testing OnlineBook CONSTRUCTORS ======" << endl;
+		cin >> isbn;
+		cin.get();
+		cin.getline(title, 50);
+		cin.getline(author, 30);
+		cin >> price;
+		cin >> url;
+		cin >> size;
+		cout << "CONSTRUCTOR" << endl;
+		OnlineBook ob1(isbn, title, author, price, url, size);
+		cout << ob1 << endl;
+		cout << "COPY CONSTRUCTOR" << endl;
+		OnlineBook ob2(ob1);
+		cin >> isbn;
+		ob2.setISBN(isbn);
+		cout << ob1 << endl;
+		cout << ob2 << endl;
+		cout << "OPERATOR =" << endl;
+		ob1 = ob2;
+		cin >> isbn;
+		ob2.setISBN(isbn);
+		cout << ob1 << endl;
+		cout << ob2 << endl;
+	}
+	if (testCase == 3){
+		cout << "====== Testing PrintBook class ======" << endl;
+		cin >> n;
+		books = new Book *[n];
+
+		for (int i = 0; i < n; i++){
+			cin >> isbn;
+			cin.get();
+			cin.getline(title, 50);
+			cin.getline(author, 30);
+			cin >> price;
+			cin >> weight;
+			cin >> inStock;
+			cout << "CONSTRUCTOR" << endl;
+			books[i] = new PrintBook(isbn, title, author, price, weight, inStock);
+			cout << "OPERATOR <<" << endl;
+			cout << *books[i];
+		}
+		cout << "OPERATOR >" << endl;
+		cout << "Rezultat od sporedbata e: " << endl;
+		if (*books[0] > *books[1])
+			cout << *books[0];
+		else
+			cout << *books[1];
+	}
+	if (testCase == 4){
+		cout << "====== Testing method mostExpensiveBook() ======" << endl;
+		cin >> n;
+		books = new Book *[n];
+
+		for (int i = 0; i<n; i++){
+
+			cin >> tip >> isbn;
+			cin.get();
+			cin.getline(title, 50);
+			cin.getline(author, 30);
+			cin >> price;
+			if (tip == 1) {
+
+				cin >> url;
+				cin >> size;
+
+				books[i] = new OnlineBook(isbn, title, author, price, url, size);
+
+			}
+			else {
+				cin >> weight;
+				cin >> inStock;
+
+				books[i] = new PrintBook(isbn, title, author, price, weight, inStock);
+			}
+		}
+
+		mostExpensiveBook(books, n);
+	}
+
+	for (int i = 0; i<n; i++) delete books[i];
+		delete[] books;
+	return 0;
+}
