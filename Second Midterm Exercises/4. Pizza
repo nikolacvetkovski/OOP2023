@@ -72,7 +72,7 @@ private:
     bool isWhiteFlour;
 
 public:
-    FoldedPizza(const char *name = "", char *ingredients = "", double pricePizza = 0.0) : Pizza(name,ingredients,pricePizza) {
+    FoldedPizza(const char *name = "", char *ingredients = "", double pricePizza = 0.0, bool isWhiteFlour = true) : Pizza(name,ingredients,pricePizza) {
         this->isWhiteFlour = isWhiteFlour;
     }
 
