@@ -1,0 +1,131 @@
+// vashiot kod ovde
+#include<iostream>
+#include<cstring>
+using namespace std;
+
+class Vozac {
+protected:
+    char ime[100];
+    int vozrast;
+    int brTrki;
+    bool daliVeteran;
+
+public:
+    Vozac(const char *ime = "", int vozrast = 0, int brTrki = 0, bool daliVeteran = false) {
+        strcpy(this->ime, ime);
+        this->vozrast = vozrast;
+        this->brTrki = brTrki;
+        this->daliVeteran = daliVeteran;
+    }
+
+    friend ostream &operator<< (ostream &out, Vozac &other) {
+        out << other.ime << endl << other.vozrast << endl << other.brTrki << endl;
+
+        if(other.daliVeteran) {
+            out << "VETERAN" << endl;
+        }
+
+        return out;
+    }
+
+    virtual int zarabotkaOdTrka() = 0;
+
+    virtual float danok() = 0;
+
+    bool operator== (Vozac &other) {
+        return this->zarabotkaOdTrka() == other.zarabotkaOdTrka();
+    }
+};
+
+class Avtomobilist : public Vozac {
+private:
+    float cenaAvtomobil;
+
+public:
+    Avtomobilist(const char *ime = "", int vozrast = 0, int brTrki = 0, bool daliVeteran = false, float cenaAvtomobil = 0.0) : Vozac(ime,vozrast,brTrki,daliVeteran) {
+        this->cenaAvtomobil = cenaAvtomobil;
+    }
+
+    int zarabotkaOdTrka() {
+        return cenaAvtomobil / 5;
+    }
+
+    float danok() {
+        if(brTrki > 10) {
+            return zarabotkaOdTrka() * 0.15;
+        }
+        return zarabotkaOdTrka() * 0.1;
+    }
+};
+
+class Motociklist : public Vozac {
+private:
+    int mokjnostMotor;
+
+public:
+    Motociklist(const char *ime = "", int vozrast = 0, int brTrki = 0, bool daliVeteran = false, int mokjnostMotor = 0) : Vozac(ime,vozrast,brTrki,daliVeteran) {
+        this->mokjnostMotor = mokjnostMotor;
+    }
+
+    int zarabotkaOdTrka() {
+        return mokjnostMotor * 20;
+    }
+
+    float danok() {
+        if(daliVeteran) {
+            return zarabotkaOdTrka() * 0.25;
+        }
+        return zarabotkaOdTrka() * 0.2;
+    }
+};
+
+int soIstaZarabotuvachka(Vozac **vozaci, int n, Vozac *vozac) {
+    int brVozaci = 0;
+    for(int i=0; i<n; i++) {
+        if(*vozaci[i] == *vozac) {
+            brVozaci++;
+        }
+    }
+    return  brVozaci;
+}
+
+int main() {
+	int n, x;
+	cin >> n >> x;
+	Vozac **v = new Vozac*[n];
+	char ime[100];
+	int vozrast;
+	int trki;
+	bool vet;
+	for(int i = 0; i < n; ++i) {
+		cin >> ime >> vozrast >> trki >> vet;
+		if(i < x) {
+			float cena_avto;
+			cin >> cena_avto;
+			v[i] = new Avtomobilist(ime, vozrast, trki, vet, cena_avto);
+		} else {
+			int mokjnost;
+			cin >> mokjnost;
+			v[i] = new Motociklist(ime, vozrast, trki, vet, mokjnost);
+		}
+	}
+	cout << "=== DANOK ===" << endl;
+	for(int i = 0; i < n; ++i) {
+		cout << *v[i];
+		cout << v[i]->danok() << endl;
+	}
+	cin >> ime >> vozrast >> trki >> vet;
+	int mokjnost;
+	cin >> mokjnost;
+	Vozac *vx = new Motociklist(ime, vozrast, trki, vet, mokjnost);
+	cout << "=== VOZAC X ===" << endl;
+	cout << *vx;
+	cout << "=== SO ISTA ZARABOTUVACKA KAKO VOZAC X ===" << endl;
+	cout << soIstaZarabotuvachka(v, n, vx);
+    for(int i = 0; i < n; ++i) {
+        delete v[i];
+    }
+    delete [] v;
+    delete vx;
+	return 0;
+}
