@@ -1,17 +1,19 @@
-#include<iostream>
-#include<cstring>
+#include <iostream>
+#include <cstring>
 #define MAX 50
+
 using namespace std;
 
 class UserExistsException {
 public:
+    UserExistsException() {}
 
     void print() {
         cout << "The user already exists in the list!" << endl;
     }
 };
 
-enum typeC {
+enum typeCustomer {
     standard = 0,
     loyal = 1,
     vip = 2
@@ -21,77 +23,78 @@ class Customer {
 private:
     char name[50];
     char email[50];
-    typeC customer;
-    static float baseDiscount;
-    const static float additionalDiscount;
+    typeCustomer typeC;
+    static int BASIC_DISCOUNT;
+    static const int ADDITIONAL_DISCOUNT;
     int numOfProducts;
 
 public:
-    Customer(const char *name = "", const char *email = "", typeC customer = standard, int numOfProducts = 0) {
+    Customer(const char *name = "", const char *email = "", typeCustomer typeC = standard, int numOfProducts = 0) {
         strcpy(this->name, name);
         strcpy(this->email, email);
-        this->customer = (typeC) customer;
+        this->typeC = (typeCustomer) typeC;
         this->numOfProducts = numOfProducts;
     }
 
     friend ostream &operator<< (ostream &out, Customer &other) {
-        out << other.name << endl;
-        out << other.email << endl;
-        out << other.numOfProducts << endl;
-        if(other.customer == 0) {
-            out << "standard 0" << endl;
+        out << other.name << endl << other.email << endl << other.numOfProducts << endl;
+        if(other.typeC == 0) {
+            out << "standard " << "0" << endl;
         }
-        else if(other.customer == 1) {
-            out << "loyal " << other.baseDiscount <<endl;
+        else if(other.typeC == 1) {
+            out << "loyal " << Customer::BASIC_DISCOUNT << endl;
         }
         else {
-            out << "vip " << other.additionalDiscount << endl;
+            out << "vip " << Customer::ADDITIONAL_DISCOUNT + Customer::BASIC_DISCOUNT << endl;
         }
-
         return out;
     }
 
-    bool operator== (Customer &other) {
-        return strcmp(this->email, other.email) == 0;
+    char *getEmail() {
+        return email;
     }
 
-    void setTypeCustomer(typeC newCustomer) {
-        customer = (typeC)newCustomer;
+    int getnumOfProducts() {
+        return numOfProducts;
     }
 
     int getTypeCustomer() {
-        return customer;
+        return typeC;
     }
 
-    int getNumOfProducts() {
-        return numOfProducts;
+    void setTypeCustomer(typeCustomer newTypeCustomer) {
+        typeC = (typeCustomer) newTypeCustomer;
     }
     
-    void static setDiscount1(int number) {
-        baseDiscount = number;
+    void setDiscount1(int newDiscount) {
+        Customer::BASIC_DISCOUNT = newDiscount;
     }
 };
 
 class FINKI_bookstore {
 private:
     Customer *customers;
-    int n;
+    int numOfCustomers;
 
 public:
-    FINKI_bookstore(Customer *customers = 0, int n = 0) {
-        this->n = n;
-        this->customers = new Customer [n];
+    FINKI_bookstore(Customer *customers = 0, int numOfCustomers = 0) {
+        this->numOfCustomers = numOfCustomers;
+        this->customers = new Customer [this->numOfCustomers];
 
-        for(int i=0; i<n; i++) {
+        for(int i=0; i<this->numOfCustomers; i++) {
             this->customers[i] = customers[i];
         }
     }
 
-    FINKI_bookstore(const FINKI_bookstore &other) {
-        this->n = other.n;
-        this->customers = new Customer [other.n];
+    ~FINKI_bookstore() {
+        delete[] customers;
+    }
 
-        for(int i=0; i<other.n; i++) {
+    FINKI_bookstore(const FINKI_bookstore &other) {
+        this->numOfCustomers = other.numOfCustomers;
+        this->customers = new Customer [other.numOfCustomers];
+
+        for(int i=0; i<other.numOfCustomers; i++) {
             this->customers[i] = other.customers[i];
         }
     }
@@ -100,69 +103,64 @@ public:
         if(this != &other) {
             delete[] customers;
 
-            this->n = other.n;
-            this->customers = new Customer [other.n];
+            this->numOfCustomers = other.numOfCustomers;
+            this->customers = new Customer [other.numOfCustomers];
 
-            for(int i=0; i<other.n; i++) {
+            for(int i=0; i<other.numOfCustomers; i++) {
                 this->customers[i] = other.customers[i];
             }
         }
         return *this;
     }
 
-    ~FINKI_bookstore() {
-        delete[] customers;
-    }
-
     FINKI_bookstore &operator+= (Customer &other) {
-        for(int i=0; i<n; i++) {
-            if(customers[i] == other) {
+        for(int i=0; i<numOfCustomers; i++) {
+            if(strcmp(this->customers[i].getEmail(), other.getEmail()) == 0) {
                 throw UserExistsException();
             }
         }
 
-        Customer *temp = new Customer [n + 1];
-        for(int i=0; i<n; i++) {
+        Customer *temp = new Customer [numOfCustomers + 1];
+        for(int i=0; i<numOfCustomers; i++) {
             temp[i] = customers[i];
         }
-        temp[n++] = other;
+        temp[numOfCustomers++] = other;
         delete[] customers;
         customers = temp;
         return *this;
     }
-    
-    void setCustomers(Customer *array, int newN)
-    {
-        delete[]customers;
-        customers=new Customer[newN];
-        for(int i=0;i<newN;i++)
-        {
-            customers[i]=array[i];
-        }
-        n=newN;
-    }
 
     void update() {
-        for(int i=0; i<n; i++) {
-            if(customers[i].getTypeCustomer() == 0 && customers[i].getNumOfProducts() > 5) {
-                customers[i].setTypeCustomer(typeC(1));
+        for(int i=0; i<numOfCustomers; i++) {
+            if(customers[i].getTypeCustomer() == 0 && customers[i].getnumOfProducts() > 5) {
+                customers[i].setTypeCustomer(typeCustomer(1));
             }
-            else if(customers[i].getTypeCustomer() == 1 && customers[i].getNumOfProducts() > 10) {
-                customers[i].setTypeCustomer(typeC(2));
+            else if(customers[i].getTypeCustomer() == 1 && customers[i].getnumOfProducts() > 10) {
+                customers[i].setTypeCustomer(typeCustomer(2));
             }
         }
     }
-
-    friend ostream &operator<< (ostream &out, const FINKI_bookstore &other) {
-        for(int i=0; i<other.n; i++) {
+    
+    friend ostream &operator<< (ostream &out, FINKI_bookstore &other) {
+        for(int i=0; i<other.numOfCustomers; i++) {
             out << other.customers[i];
         }
+
         return out;
+    }
+    
+    void setCustomers(Customer *newCustomers, int n) {
+        this->numOfCustomers = n;
+        this->customers = new Customer [numOfCustomers];
+        
+        for(int i=0; i<numOfCustomers; i++) {
+            customers[i] = newCustomers[i];
+        }
     }
 };
 
-float Customer::baseDiscount = 10;
-const float Customer::additionalDiscount = 30;
+int Customer::BASIC_DISCOUNT  = 10;
+const int Customer::ADDITIONAL_DISCOUNT = 20;
 
 int main(){
   int testCase;
@@ -183,7 +181,7 @@ int main(){
     cin >> tC;
     cin >> numProducts;
     cout << "===== CONSTRUCTOR ======" << endl;
-    Customer c(name, email, (typeC) tC, numProducts);
+    Customer c(name, email, (typeCustomer) tC, numProducts);
     cout << c;
 
   }
@@ -196,7 +194,7 @@ int main(){
     cin >> tC;
     cin >> numProducts;
     cout << "===== CONSTRUCTOR ======" << endl;
-    Customer c(name, email, (typeC) tC, numProducts);
+    Customer c(name, email, (typeCustomer) tC, numProducts);
     cout << c;
 
     c.setDiscount1(5);
@@ -216,7 +214,7 @@ int main(){
       cin.getline(email,MAX);
       cin >> tC;
       cin >> numProducts;
-      Customer c(name, email, (typeC) tC, numProducts);
+      Customer c(name, email, (typeCustomer) tC, numProducts);
       customers[i] = c;
     }
 
@@ -237,7 +235,7 @@ int main(){
       cin.getline(email,MAX);
       cin >> tC;
       cin >> numProducts;
-      Customer c(name, email, (typeC) tC, numProducts);
+      Customer c(name, email, (typeCustomer) tC, numProducts);
       customers[i] = c;
     }
 
@@ -248,7 +246,7 @@ int main(){
     cin.getline(email,MAX);
     cin >> tC;
     cin >> numProducts;
-    Customer c(name, email, (typeC) tC, numProducts);
+    Customer c(name, email, (typeCustomer) tC, numProducts);
     
    try {
         fc+=c;
@@ -273,7 +271,7 @@ int main(){
       cin.getline(email,MAX);
       cin >> tC;
       cin >> numProducts;
-      Customer c(name, email, (typeC) tC, numProducts);
+      Customer c(name, email, (typeCustomer) tC, numProducts);
       customers[i] = c;
       temp = c;
     }
@@ -309,7 +307,7 @@ int main(){
       cin.getline(email,MAX);
       cin >> tC;
       cin >> numProducts;
-      Customer c(name, email, (typeC) tC, numProducts);
+      Customer c(name, email, (typeCustomer) tC, numProducts);
       customers[i] = c;
     }
 
