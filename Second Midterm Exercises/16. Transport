@@ -1,0 +1,152 @@
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+class Transport {
+protected:
+    char destination[30];
+    int basePrice;
+    int distanceInKM;
+
+public:
+    Transport(char *destination = "", int basePrice = 0, int distanceInKM = 0) {
+        strcpy(this->destination, destination);
+        this->basePrice = basePrice;
+        this->distanceInKM = distanceInKM;
+    }
+
+    char *getDestination() {
+        return destination;
+    }
+
+    int getBasePrice() {
+        return basePrice;
+    }
+
+    int getDistanceInKM() {
+        return distanceInKM;
+    }
+
+    void setDestination(char *newDestination) {
+        strcpy(this->destination, newDestination);
+    }
+
+    void setBasePrice(int newBasePrice) {
+        this->basePrice = newBasePrice;
+    }
+
+    void setDistanceInKM(int newDistanceInKM) {
+        this->distanceInKM = newDistanceInKM;
+    }
+
+    virtual int cenaTransport() = 0;
+
+    bool operator< (Transport &other) {
+       return this->distanceInKM < other.distanceInKM;
+    }
+
+    friend ostream &operator<< (ostream &out, Transport &other) {
+        out << other.destination << ' ' << other.distanceInKM << ' ' << other.cenaTransport() << endl;
+
+        return out;
+    }
+};
+
+class AvtomobilTransport : public Transport {
+private:
+    bool isPaidChaffeur;
+
+public:
+    AvtomobilTransport(char *destination = "", int basePrice = 0, int distanceInKM = 0, bool isPaidChaffeur = true) : Transport(destination,basePrice,distanceInKM) {
+        this->isPaidChaffeur = isPaidChaffeur;
+    }
+
+    bool getIsPaidChauffeur() {
+        return isPaidChaffeur;
+    }
+
+    void setIsPaidChauffeur(bool newisPaidChauffeur) {
+        this->isPaidChaffeur = newisPaidChauffeur;
+    }
+
+    int cenaTransport() {
+        if(isPaidChaffeur == true) {
+            return getBasePrice() * 1.2;
+        }
+        return getBasePrice();
+    }
+};
+
+class KombeTransport : public Transport {
+private:
+    int numPeople;
+
+public:
+    KombeTransport(char *destination = "", int basePrice = 0, int distanceInKM = 0, int numPeople = 0) : Transport(destination,basePrice,distanceInKM) {
+        this->numPeople = numPeople;
+    }
+
+    int getNumPeople() {
+        return numPeople;
+    }
+
+    void setNumPeople(int newNumPeople) {
+        this->numPeople = newNumPeople;
+    }
+
+    int cenaTransport() {
+        return getBasePrice() - (numPeople * 200);
+    }
+};
+
+ void pecatiPoloshiPonudi(Transport **ponudi, int n, Transport &other) {
+    Transport *temp;
+    for(int i=0; i<n; i++) {
+        for(int j=0; j<n-i-1; j++) {
+            if(*ponudi[j+1] < *ponudi[j]) {
+                temp = ponudi[j];
+                ponudi[j] = ponudi[j+1];
+                ponudi[j+1] = temp;
+            }
+        }
+    }
+
+    for(int i=0; i<n; i++) {
+        if(other.cenaTransport() < ponudi[i]->cenaTransport()) {
+            cout << *ponudi[i];
+        }
+    }
+}
+
+int main(){
+
+char destinacija[20];
+int tip,cena,rastojanie,lugje;
+bool shofer;
+int n;
+cin>>n;
+Transport  **ponudi;
+ponudi=new Transport *[n];
+
+for (int i=0;i<n;i++){
+
+    cin>>tip>>destinacija>>cena>>rastojanie;
+    if (tip==1) {
+        cin>>shofer;
+        ponudi[i]=new AvtomobilTransport(destinacija,cena,rastojanie,shofer);
+
+    }
+    else {
+        cin>>lugje;
+        ponudi[i]=new KombeTransport(destinacija,cena,rastojanie,lugje);
+    }
+}
+
+AvtomobilTransport nov("Ohrid",2000,600,false);
+pecatiPoloshiPonudi(ponudi,n,nov);
+
+for (int i=0;i<n;i++) delete ponudi[i];
+delete [] ponudi;
+return 0;
+}
