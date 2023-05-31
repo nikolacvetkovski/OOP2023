@@ -1,17 +1,20 @@
 #include <iostream>
 #include <cstring>
+
 using namespace std;
 
 class FudbalskaEkipa {
 protected:
     char imeTrener[100];
-    int goloviNatprevari[10];
+    char imeEkipa[100];
+    int brGolovi[10];
 
 public:
-    FudbalskaEkipa(char *imeTrener = "", int *goloviNatprevari = 0) {
+    FudbalskaEkipa(char *imeTrener = "", int *brGolovi = 0) {
         strcpy(this->imeTrener, imeTrener);
+
         for(int i=0; i<10; i++) {
-            this->goloviNatprevari[i] = goloviNatprevari[i];
+            this->brGolovi[i] = brGolovi[i];
         }
     }
 
@@ -19,24 +22,29 @@ public:
     virtual char *getImeEkipa() = 0;
 
     friend ostream &operator<< (ostream &out, FudbalskaEkipa &other) {
-        out << other.getImeEkipa() << endl;
-        out << other.imeTrener << endl;
-        out << other.uspeh() << endl;
-
+        out << other.getImeEkipa() << endl << other.imeTrener << endl << other.uspeh() << endl;
         return out;
     }
 
-    FudbalskaEkipa &operator+= (int number) {
-        int temp[10], counter = 0;
-        
+    FudbalskaEkipa &operator+= (int number){
+        int temp[10], n = 0;
         for(int i=1; i<10; i++) {
-            temp[counter++] = goloviNatprevari[i];
+            temp[n++] = brGolovi[i];
         }
-        temp[counter++] = number;
+        temp[n++] = number;
         for(int i=0; i<10; i++) {
-            goloviNatprevari[i] = temp[i];
+            brGolovi[i] = temp[i];
         }
         return *this;
+    }
+
+    int getVkGolovi() {
+        int sum = 0;
+
+        for(int i=0; i<10; i++) {
+            sum += brGolovi[i];
+        }
+        return sum;
     }
 
     bool operator> (FudbalskaEkipa &other) {
@@ -50,9 +58,9 @@ private:
     int brTituli;
 
 public:
-    Klub(char *imeTrener = "", int *goloviNatprevari = 0, char *imeKlub = "", int brTituli = 0) : FudbalskaEkipa(imeTrener,goloviNatprevari) {
-       strcpy(this->imeKlub, imeKlub);
-       this->brTituli = brTituli;
+    Klub(char *imeTrener = "", int *brGolovi = 0, char *imeKlub = "", int brTituli = 0) : FudbalskaEkipa(imeTrener, brGolovi) {
+        strcpy(this->imeKlub, imeKlub);
+        this->brTituli = brTituli;
     }
 
     char *getImeEkipa() {
@@ -60,24 +68,19 @@ public:
     }
 
     int uspeh() {
-        int sum = 0;
-        for(int i=0; i<10; i++) {
-            sum += goloviNatprevari[i];
-        }
-
-        return (sum * 3) + (brTituli * 1000);
+        return (getVkGolovi() * 3) + (brTituli * 1000);
     }
 };
 
 class Reprezentacija : public FudbalskaEkipa {
 private:
     char imeDrzava[100];
-    int brNastapi;
+    int brNastani;
 
 public:
-    Reprezentacija(char *imeTrener = "", int *goloviNatprevari = 0, char *imeDrzava = "", int brNastapi = 0) : FudbalskaEkipa(imeTrener,goloviNatprevari) {
+    Reprezentacija(char *imeTrener = "", int *brGolovi = 0, char *imeDrzava = "", int brNastani = 0) : FudbalskaEkipa(imeTrener, brGolovi) {
         strcpy(this->imeDrzava, imeDrzava);
-        this->brNastapi = brNastapi;
+        this->brNastani = brNastani;
     }
 
     char *getImeEkipa() {
@@ -85,23 +88,18 @@ public:
     }
 
     int uspeh() {
-        int sum = 0;
-        for(int i=0; i<10; i++) {
-            sum += goloviNatprevari[i];
-        }
-
-        return (sum * 3) + (brNastapi * 50);
+        return (getVkGolovi() * 3) + (brNastani * 50);
     }
 };
 
 void najdobarTrener(FudbalskaEkipa **ekipi, int n) {
-    FudbalskaEkipa *najuspesnaEkipa = ekipi[0];
+    FudbalskaEkipa *maxEkipa = ekipi[0];
     for(int i=1; i<n; i++) {
-        if(*ekipi[i] > *najuspesnaEkipa) {
-            najuspesnaEkipa = ekipi[i];
+        if(*ekipi[i] > *maxEkipa) {
+            maxEkipa = ekipi[i];
         }
     }
-    cout << *najuspesnaEkipa;
+    cout << *maxEkipa;
 }
 
 int main() {
