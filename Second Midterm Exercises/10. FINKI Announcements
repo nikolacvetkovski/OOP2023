@@ -1,0 +1,313 @@
+#include <iostream>
+#include <string.h>
+#include <cstdlib>
+
+using namespace std;
+
+//место за вашиот код
+
+class NegativnaVrednost {
+public:
+    NegativnaVrednost() {}
+
+    void print() {
+        cout << "Oglasot ima nevalidna vrednost za cenata i nema da bide evidentiran!" << endl;
+    }
+};
+
+class Oglas {
+private:
+    char naslovOglas[50];
+    char kategorija[30];
+    char opis[100];
+    float cenaEvra;
+
+public:
+    Oglas(char *naslovOglas = "", char *kategorija = "", char *opis = "", float cenaEvra = 0.0) {
+        strcpy(this->naslovOglas, naslovOglas);
+        strcpy(this->kategorija, kategorija);
+        strcpy(this->opis, opis);
+        this->cenaEvra = cenaEvra;
+    }
+
+    bool operator> (Oglas &other) {
+        return this->cenaEvra > other.cenaEvra;
+    }
+
+    friend ostream &operator<< (ostream &out, Oglas &other) {
+        out << other.naslovOglas << endl << other.opis << endl << other.cenaEvra << " evra" << endl;
+        out << endl;
+
+        return out;
+    }
+
+    float getCenaEvra() {
+        return cenaEvra;
+    }
+
+    char *getKategorija() {
+        return kategorija;
+    }
+};
+
+class Oglasnik {
+private:
+    char imeOglasnik[20];
+    Oglas *oglasi;
+    int n;
+
+public:
+    Oglasnik(char *imeOglasnik = "", Oglas *oglasi = 0, int n = 0) {
+        strcpy(this->imeOglasnik, imeOglasnik);
+        this->n = n;
+        this->oglasi = new Oglas [n];
+
+        for(int i=0; i<n; i++) {
+            this->oglasi[i] = oglasi[i];
+        }
+    }
+
+    Oglasnik(const Oglasnik &other) {
+        strcpy(this->imeOglasnik, other.imeOglasnik);
+        this->n = other.n;
+        this->oglasi = new Oglas [other.n];
+
+        for(int i=0; i<other.n; i++) {
+            this->oglasi[i] = other.oglasi[i];
+        }
+    }
+
+    Oglasnik &operator= (const Oglasnik &other) {
+        if(this != &other) {
+            delete[] oglasi;
+
+            strcpy(this->imeOglasnik, other.imeOglasnik);
+            this->n = other.n;
+            this->oglasi = new Oglas [other.n];
+
+            for(int i=0; i<other.n; i++) {
+                this->oglasi[i] = other.oglasi[i];
+            }
+        }
+        return *this;
+    }
+
+    ~Oglasnik() {
+        delete[] oglasi;
+    }
+
+    Oglasnik &operator+= (Oglas &other) {
+        if(other.getCenaEvra() < 0) {
+            throw NegativnaVrednost();
+        }
+
+        else {
+            Oglas *temp = new Oglas [n + 1];
+            for(int i=0; i<n; i++) {
+                temp[i] = oglasi[i];
+            }
+            temp[n++] = other;
+            delete[] oglasi;
+            oglasi = temp;
+            return *this;
+        }
+    }
+
+    friend ostream &operator<< (ostream &out, Oglasnik &other) {
+        out << "FINKI-Oglasnik" << endl;
+        for(int i=0; i<other.n; i++) {
+            out << other.oglasi[i];
+        }
+        return out;
+    }
+
+    void najniskaCena() {
+        Oglas minOglas = oglasi[0];
+        for(int i=1; i<n; i++) {
+            if(minOglas > oglasi[i]) {
+                minOglas = oglasi[i];
+            }
+        }
+        cout << minOglas;
+    }
+
+    void oglasiOdKategorija(const char *k) {
+        for(int i=0; i<n; i++) {
+            if(strcmp(oglasi[i].getKategorija(), k) == 0) {
+                cout << oglasi[i];
+            }
+        }
+    }
+};
+
+int main(){
+    
+    char naslov[50];
+    char kategorija[30];
+    char opis[100];
+    float cena;
+    char naziv[50];
+    char k[30];
+    int n;
+    
+    int tip;
+    cin>>tip;
+    
+    if (tip==1){
+        cout<<"-----Test Oglas & operator <<-----" <<endl;
+        cin.get();
+		cin.getline(naslov,49);
+        cin.getline(kategorija,29);
+        cin.getline(opis,99);
+        cin>>cena;
+        Oglas o(naslov, kategorija, opis, cena);
+        cout<<o;
+    }
+    else if (tip==2){
+    	cout<<"-----Test Oglas & operator > -----" <<endl;
+        cin.get();
+		cin.getline(naslov,49);
+        cin.getline(kategorija,29);
+        cin.getline(opis,99);
+        cin>>cena;
+        Oglas o1(naslov, kategorija, opis, cena);
+        cin.get();
+		cin.getline(naslov,49);
+        cin.getline(kategorija,29);
+        cin.getline(opis,99);
+        cin>>cena;
+        Oglas o2(naslov, kategorija, opis, cena);
+        if (o1>o2) cout<<"Prviot oglas e poskap."<<endl;
+        else cout<<"Prviot oglas ne e poskap."<<endl;    
+    }
+    else if (tip==3){
+        cout<<"-----Test Oglasnik, operator +=, operator << -----" <<endl ;
+        cin.get();
+		cin.getline(naziv,49);
+        cin>>n;
+        Oglasnik ogl(naziv);
+        for (int i = 0; i < n; i++){
+            cin.get();
+            cin.getline(naslov,49);
+            cin.getline(kategorija,29);
+            cin.getline(opis,99);
+            cin>>cena;
+        	Oglas o(naslov, kategorija, opis, cena);
+            try {
+        	    ogl+=o;
+        	}
+        	catch (NegativnaVrednost nv) {
+        	    nv.print();
+        	}
+        }
+        cout<<ogl;
+    }
+    else if (tip==4){
+      	cout<<"-----Test oglasOdKategorija -----" <<endl ;
+      	cin.get();
+		cin.getline(naziv,49);
+        cin>>n;
+        Oglasnik ogl(naziv);
+        for (int i = 0; i < n; i++){
+            cin.get();
+            cin.getline(naslov,49);
+            cin.getline(kategorija,29);
+            cin.getline(opis,99);
+            cin>>cena;
+        	Oglas o(naslov, kategorija, opis, cena);
+            try {
+        	    ogl+=o;
+        	}
+        	catch (NegativnaVrednost nv) {
+        	    nv.print();
+        	}
+        }
+        cin.get();
+		cin.getline(k,29);
+        cout<<"Oglasi od kategorijata: " <<k<<endl;
+      	ogl.oglasiOdKategorija(k);
+    
+    }
+    else if (tip==5){
+    	cout<<"-----Test Exception -----" <<endl ;
+      	cin.get();
+		cin.getline(naziv,49);
+        cin>>n;
+        Oglasnik ogl(naziv);
+        for (int i = 0; i < n; i++){
+            cin.get();
+            cin.getline(naslov,49);
+            cin.getline(kategorija,29);
+            cin.getline(opis,99);
+            cin>>cena;
+        	Oglas o(naslov, kategorija, opis, cena);            
+			try {
+        	    ogl+=o;
+        	}
+        	catch (NegativnaVrednost nv) {
+        	    nv.print();
+        	}
+        }
+        cout<<ogl;
+    
+    }
+    else if (tip==6){
+    	cout<<"-----Test najniskaCena -----" <<endl ;
+      	cin.get();
+		cin.getline(naziv,49);
+        cin>>n;
+        Oglasnik ogl(naziv);
+        for (int i = 0; i < n; i++){
+            cin.get();
+            cin.getline(naslov,49);
+            cin.getline(kategorija,29);
+            cin.getline(opis,99);
+            cin>>cena;
+        	Oglas o(naslov, kategorija, opis, cena);            
+            try {
+        	    ogl+=o;
+        	}
+        	catch (NegativnaVrednost nv) {
+        	    nv.print();
+        	}          
+        }
+        cout<<"Oglas so najniska cena:"<<endl;
+      	ogl.najniskaCena();
+    
+    }
+    else if (tip==7){
+    	cout<<"-----Test All -----" <<endl ;
+      	cin.get();
+		cin.getline(naziv,49);
+        cin>>n;
+        Oglasnik ogl(naziv);
+        for (int i = 0; i < n; i++){
+            cin.get();
+            cin.getline(naslov,49);
+            cin.getline(kategorija,29);
+            cin.getline(opis,99);
+            cin>>cena;
+        	Oglas o(naslov, kategorija, opis, cena);
+        	try {
+        	    ogl+=o;
+        	}
+        	catch (NegativnaVrednost nv) {
+        	    nv.print();
+        	}
+            
+        }
+        cout<<ogl;
+        
+        cin.get();
+        cin.get();
+		cin.getline(k,29);
+        cout<<"Oglasi od kategorijata: " <<k<<endl;
+      	ogl.oglasiOdKategorija(k);
+        
+        cout<<"Oglas so najniska cena:"<<endl;
+      	ogl.najniskaCena();
+    
+    }
+    
+	return 0;
+}
