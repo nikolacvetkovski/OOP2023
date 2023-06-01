@@ -105,9 +105,9 @@ void vkupno_SMS(SMS** poraka, int n) {
     cout << "Vkupno ima " << speccounter << " specijalni SMS poraki i nivnata cena e: " << specVkCena << endl;
 }
 
-int main(){
-
-	char tel[20], msg[1000];
+int main()
+{
+    char tel[20], msg[1000];
     float cena;
     float price;
     int p;
